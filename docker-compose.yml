@@ -1,0 +1,39 @@
+services:
+    app:
+        container_name: gym-app
+        build:
+            context: .docker
+            dockerfile: Dockerfile
+            target: development
+            args:
+                USER_ID: ${USER_ID:-1000}
+                GROUP_ID: ${GROUP_ID:-1000}
+        ports:
+            - "80:8080"
+        volumes:
+            - ./:/var/www/html
+        networks:
+            - gym
+        depends_on:
+            - database
+
+    database:
+        container_name: gym-database
+        image: postgres:18.1-alpine
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB:-gym}
+            POSTGRES_USER: ${POSTGRES_USER:-gym_user}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            - gym
+
+volumes:
+    postgres_data:
+
+networks:
+    gym:
+        driver: bridge
