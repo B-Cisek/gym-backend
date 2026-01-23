@@ -16,6 +16,7 @@ services:
             - gym
         depends_on:
             - database
+            - redis
 
     database:
         container_name: gym-database
@@ -31,8 +32,18 @@ services:
         networks:
             - gym
 
+    redis:
+        container_name: gym-redis
+        image: redis:8.0.2-alpine
+        command: redis-server --appendonly yes
+        volumes:
+            - redis_data:/data
+        networks:
+            - gym
+
 volumes:
     postgres_data:
+    redis_data:
 
 networks:
     gym:
