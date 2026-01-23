@@ -10,6 +10,8 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
+RUN install-php-extensions intl bcmath redis
+
 # Drop back to our unprivileged user
 USER www-data
 
