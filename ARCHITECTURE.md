@@ -207,13 +207,75 @@ Limity sprawdzane w warstwie serwisów (domain logic).
 
 ---
 
-## 10. Dlaczego to jest dobre pod portfolio
+## 10. Struktura katalogów (Layered Architecture)
 
-* realny model biznesowy (multi-location)
-* clean domain
-* brak anty-patternów UX (relogin)
-* pokazuje zrozumienie SaaS i multi-tenancy
-* łatwe do opisania na rozmowie technicznej
+System oparty o architekturę warstwową z podziałem na cztery główne warstwy:
+
+```
+src/
+├── Domain/          # Warstwa domenowa (encje, interfejsy, logika biznesowa)
+├── Application/     # Warstwa aplikacyjna (use cases, komendy, query)
+├── Infrastructure/  # Warstwa infrastruktury (implementacje, persistence)
+└── Presentation/    # Warstwa prezentacji (API controllers, requests)
+```
+
+### Domain (`src/Domain/`)
+
+Rdzeń biznesowy aplikacji – encje i logika domenowa:
+
+* **Entity/** – encje domenowe (User, Gym, Pass, Owner)
+* **Repository/** – interfejsy repozytoriów (bez implementacji)
+* **Service/** – serwisy domenowe (czysta logika biznesowa)
+
+---
+
+### Application (`src/Application/`)
+
+Przypadki użycia (use cases):
+
+* **Command/** – komendy i handlery (zmiany stanu)
+* **Query/** – zapytania i handlery (odczyt danych)
+* **DTO/** – Data Transfer Objects
+
+---
+
+### Infrastructure (`src/Infrastructure/`)
+
+Implementacje techniczne:
+
+* **Persistence/** – repozytoria (Doctrine), ORM mapping, migracje
+* **Security/** – authenticatory, voters, providery
+* **External/** – integracje zewnętrzne (płatności, email)
+
+---
+
+### Presentation (`src/Presentation/`)
+
+Warstwa API:
+
+* **Controller/** – kontrolery API (thin, delegują do Application)
+* **Request/** – walidacja inputu
+* **Response/** – serializacja outputu
+* **EventListener/** – event listeners dla HTTP lifecycle
+
+---
+
+### Zasady separacji warstw
+
+1. **Domain** nie zależy od niczego (pure PHP)
+2. **Application** zależy tylko od Domain
+3. **Infrastructure** implementuje interfejsy z Domain
+4. **Presentation** używa Application i Infrastructure
+
+Przepływ danych:
+
+```
+Request → Controller (Presentation)
+        → Command/Query (Application)
+        → Domain Service/Repository (Domain)
+        → Repository Implementation (Infrastructure)
+        → Database
+```
 
 ---
 
