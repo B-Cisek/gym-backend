@@ -16,7 +16,6 @@ readonly class Id
     public function toString(): string
     {
         return $this->id;
-
     }
 
     public function equals(self $otherId): bool
