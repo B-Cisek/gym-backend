@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 
@@ -18,7 +19,7 @@ use Symfony\Component\Uid\Uuid;
 #[Table(name: 'users')]
 #[UniqueConstraint(name: 'UNIQ_ID', columns: ['id'])]
 #[UniqueConstraint(name: 'UNIQ_EMAIL', columns: ['email'])]
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;

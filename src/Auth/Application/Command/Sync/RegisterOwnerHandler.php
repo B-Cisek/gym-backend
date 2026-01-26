@@ -12,8 +12,8 @@ final readonly class RegisterOwnerHandler implements CommandHandler
         private RegisterUserHandler $registerUserHandler,
     ) {}
 
-    public function __invoke(RegisterOwner $command): void
+    public function __invoke(RegisterOwner $command): string
     {
-        ($this->registerUserHandler)($command->toRegisterUser());
+        return ($this->registerUserHandler)($command->toRegisterUser());
     }
 }

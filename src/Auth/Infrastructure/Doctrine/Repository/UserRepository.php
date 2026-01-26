@@ -44,6 +44,23 @@ final readonly class UserRepository implements DomainUserRepository
             : $this->transformer->toDomain($entity);
     }
 
+    public function getByEmail(Email $email): User
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $entity = $qb->select('u')
+            ->from(UserEntity::class, 'u')
+            ->where('u.email = :email')
+            ->setParameter('email', $email->value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        return $entity === null
+            ? throw new UserNotFoundException()
+            : $this->transformer->toDomain($entity);
+    }
+
     public function existsByEmail(Email $email): bool
     {
         $qb = $this->entityManager->createQueryBuilder();

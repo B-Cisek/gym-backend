@@ -4,4 +4,9 @@ declare(strict_types=1);
 
 namespace App\Auth\Domain;
 
-interface TokenGeneratorInterface {}
+use App\Shared\Domain\Id;
+
+interface TokenGeneratorInterface
+{
+    public function generateFor(Id $id): string;
+}

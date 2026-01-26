@@ -28,4 +28,9 @@ final class JsonResponseFactory
     {
         return new JsonResponse(data: ['success' => false, 'message' => $message], status: $status);
     }
+
+    public static function signedIn(string $token): JsonResponse
+    {
+        return new JsonResponse(data: ['token' => $token], status: Response::HTTP_OK);
+    }
 }

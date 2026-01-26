@@ -8,8 +8,10 @@ use App\Shared\Domain\DomainException;
 use App\Shared\Domain\NotFoundException;
 use App\Shared\Infrastructure\Symfony\Response\ValidationErrorMapper;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 final readonly class ExceptionListener
@@ -41,6 +43,13 @@ final readonly class ExceptionListener
             $response = $this->handleNotFoundException($exception);
             $event->setResponse($response);
 
+            return;
+        }
+
+        // TODO: Handle AccessDeniedException and rest of lexik_jwt_authentication exceptions
+        if ($exception instanceof AccessDeniedException) {
+            $response = new JsonResponse(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+            $event->setResponse($response);
             return;
         }
 
