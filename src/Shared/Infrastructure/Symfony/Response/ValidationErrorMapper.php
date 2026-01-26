@@ -6,7 +6,7 @@ namespace App\Shared\Infrastructure\Symfony\Response;
 
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-final readonly class ValidationErrorMapper
+readonly class ValidationErrorMapper
 {
     public function map(ConstraintViolationListInterface $violations): ValidationErrorResponseDTO
     {

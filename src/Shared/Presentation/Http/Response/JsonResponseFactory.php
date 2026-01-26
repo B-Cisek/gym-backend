@@ -5,27 +5,27 @@ declare(strict_types=1);
 namespace App\Shared\Presentation\Http\Response;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class JsonResponseFactory
 {
-    public static function success(?string $uuid = null, int $status = 200): JsonResponse
+    public static function success(int $status = Response::HTTP_OK): JsonResponse
     {
-        $data = ['success' => true];
-
-        if ($uuid !== null) {
-            $data['uuid'] = $uuid;
-        }
-
-        return new JsonResponse($data, $status);
+        return new JsonResponse(data: ['success' => true], status: $status);
     }
 
-    public static function created(?string $uuid = null): JsonResponse
+    public static function created(): JsonResponse
     {
-        return self::success($uuid, 201);
+        return new JsonResponse(null, Response::HTTP_CREATED);
     }
 
     public static function noContent(): JsonResponse
     {
-        return new JsonResponse(null, 204);
+        return new JsonResponse(data: null, status: Response::HTTP_OK);
+    }
+
+    public static function error(string $message, int $status = Response::HTTP_BAD_REQUEST): JsonResponse
+    {
+        return new JsonResponse(data: ['success' => false, 'message' => $message], status: $status);
     }
 }

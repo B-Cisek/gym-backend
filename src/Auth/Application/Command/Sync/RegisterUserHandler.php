@@ -21,10 +21,11 @@ final readonly class RegisterUserHandler implements CommandHandler
         private PasswordHasherInterface $hasher,
         private EventDispatcher $eventDispatcher,
         private IdGeneratorInterface $idGenerator
-    )
-    {
-    }
+    ) {}
 
+    /**
+     * @throws UserAlreadyExistsException
+     */
     public function __invoke(RegisterUser $command): void
     {
         $email = Email::fromString($command->email);
@@ -36,11 +37,10 @@ final readonly class RegisterUserHandler implements CommandHandler
         $user = User::register(
             $this->idGenerator->generate(),
             $email,
-            $this->hasher->hash($command->password),
             $command->roles
         );
 
-        $this->repository->save($user);
+        $this->repository->save($user, $this->hasher->hash($command->password));
 
         $this->eventDispatcher->dispatch(new UserRegistered($user->id));
     }

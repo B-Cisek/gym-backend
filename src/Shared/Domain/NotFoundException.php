@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain;
 
-final class NotFoundException extends \RuntimeException
-{
-}
+final class NotFoundException extends \RuntimeException {}

@@ -11,8 +11,7 @@ final readonly class SymfonyEventDispatcher implements EventDispatcher
 {
     public function __construct(
         private EventDispatcherInterface $symfonyDispatcher
-    ) {
-    }
+    ) {}
 
     public function dispatch(object $event, ?string $eventName = null): void
     {

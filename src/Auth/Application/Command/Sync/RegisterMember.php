@@ -12,9 +12,7 @@ final readonly class RegisterMember implements Command
     public function __construct(
         public string $email,
         public string $password,
-    )
-    {
-    }
+    ) {}
 
     public function toRegisterUser(): RegisterUser
     {

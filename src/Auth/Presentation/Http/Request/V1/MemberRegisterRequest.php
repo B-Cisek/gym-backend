@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-final readonly class OwnerRegisterRequest
+final readonly class MemberRegisterRequest
 {
     public function __construct(
         #[NotBlank]

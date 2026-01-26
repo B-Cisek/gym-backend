@@ -10,9 +10,7 @@ final readonly class RegisterMemberHandler implements CommandHandler
 {
     public function __construct(
         private RegisterUserHandler $registerUserHandler,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(RegisterMember $command): void
     {

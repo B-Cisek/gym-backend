@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Auth\Domain;
 
-use Stringable;
-
-final readonly class Email implements Stringable
+final readonly class Email implements \Stringable
 {
     private function __construct(
         public string $value
     ) {
         $this->validate($value);
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 
     public static function fromString(string $email): self
@@ -22,11 +25,6 @@ final readonly class Email implements Stringable
     public function equals(self $other): bool
     {
         return $this->value === $other->value;
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
     }
 
     private function validate(string $email): void

@@ -14,27 +14,22 @@ final readonly class User
     private function __construct(
         public Id $id,
         public Email $email,
-        public string $password,
         public array $roles,
-    )
+    ) {}
+
+    /**
+     * @param array<UserRole> $roles
+     */
+    public static function register(Id $id, Email $email, array $roles): self
     {
+        return new self($id, $email, $roles);
     }
 
     /**
      * @param array<UserRole> $roles
      */
-    public static function register(
-        Id $id,
-        Email $email,
-        string $password,
-        array $roles,
-    ): self
+    public static function restore(Id $id, Email $email, array $roles): self
     {
-        return new self($id, $email, $password, $roles);
-    }
-
-    public function hasRole(UserRole $role): bool
-    {
-        return in_array($role, $this->roles, true);
+        return new self($id, $email, $roles);
     }
 }

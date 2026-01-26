@@ -26,18 +26,21 @@ final readonly class ExceptionListener
         if ($this->isValidationException($exception)) {
             $response = $this->handleValidationException($exception);
             $event->setResponse($response);
+
             return;
         }
 
         if ($exception instanceof DomainException) {
             $response = $this->handleDomainException($exception);
             $event->setResponse($response);
+
             return;
         }
 
         if ($exception instanceof NotFoundException) {
             $response = $this->handleNotFoundException($exception);
             $event->setResponse($response);
+
             return;
         }
 
@@ -52,6 +55,7 @@ final readonly class ExceptionListener
         }
 
         $previous = $exception->getPrevious();
+
         return $previous instanceof ValidationFailedException;
     }
 
@@ -75,9 +79,7 @@ final readonly class ExceptionListener
             'message' => $exception->getMessage(),
         ];
 
-        if ($this->environment === 'dev') {
-            $data['trace'] = $this->getStackTrace($exception);
-        }
+        $this->addStackTraceToResponse($data, $exception);
 
         return new JsonResponse($data, $exception->getHttpStatusCode());
     }
@@ -88,9 +90,7 @@ final readonly class ExceptionListener
             'message' => $exception->getMessage(),
         ];
 
-        if ($this->environment === 'dev') {
-            $data['trace'] = $this->getStackTrace($exception);
-        }
+        $this->addStackTraceToResponse($data, $exception);
 
         return new JsonResponse($data, 404);
     }
@@ -103,13 +103,24 @@ final readonly class ExceptionListener
                 : 'Internal server error',
         ];
 
-        if ($this->environment === 'dev') {
-            $data['trace'] = $this->getStackTrace($exception);
-        }
+        $this->addStackTraceToResponse($data, $exception);
 
         return new JsonResponse($data, 500);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function addStackTraceToResponse(array &$data, \Throwable $exception): void
+    {
+        if ($this->environment === 'dev') {
+            $data['trace'] = $this->getStackTrace($exception);
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     private function getStackTrace(\Throwable $exception): array
     {
         return [

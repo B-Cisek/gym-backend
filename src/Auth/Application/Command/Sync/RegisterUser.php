@@ -16,7 +16,5 @@ final readonly class RegisterUser implements Command
         public string $email,
         public string $password,
         public array $roles,
-    )
-    {
-    }
+    ) {}
 }

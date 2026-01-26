@@ -8,7 +8,7 @@ use App\Shared\Domain\Id;
 
 interface UserRepository
 {
-    public function save(User $user): void;
+    public function save(User $user, string $hashedPassword): void;
 
     public function get(Id $id): User;
 
