@@ -6,6 +6,7 @@ namespace App\Auth\Infrastructure\Security;
 
 use App\Auth\Application\Service\AuthTokenPair;
 use App\Auth\Application\Service\AuthTokenPairGeneratorInterface;
+use App\Auth\Domain\UserNotFoundException;
 use App\Auth\Infrastructure\Doctrine\Repository\UserRepository;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
@@ -26,7 +27,7 @@ readonly class AuthTokenPairGenerator implements AuthTokenPairGeneratorInterface
         $user = $this->userRepository->get($userId);
 
         if (!$user) {
-            throw new \RuntimeException('User not found');
+            throw new UserNotFoundException();
         }
 
         $token = $this->jwtManager->create($user);

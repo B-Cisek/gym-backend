@@ -3,7 +3,7 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
         server_version: '18'
         options:
-            timezone: Europe/Warsaw
+            timezone: '%env(APP_TZ)%'
         profiling_collect_backtrace: '%kernel.debug%'
     orm:
         validate_xml_mapping: true
