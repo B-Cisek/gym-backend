@@ -8,18 +8,16 @@ use App\Auth\Domain\Email;
 use App\Auth\Domain\User;
 use App\Auth\Domain\UserNotFoundException;
 use App\Auth\Domain\UserRepository as DomainUserRepository;
+use App\Auth\Infrastructure\Doctrine\Repository\UserRepository as DoctrineUserRepository;
 use App\Auth\Infrastructure\Transformer\UserTransformer;
 use App\Shared\Domain\Id;
-use App\Auth\Infrastructure\Doctrine\Repository\UserRepository as DoctrineUserRepository;
 
 readonly class UserRepository implements DomainUserRepository
 {
     public function __construct(
         private DoctrineUserRepository $doctrineRepository,
         private UserTransformer $transformer
-    )
-    {
-    }
+    ) {}
 
     public function save(User $user, string $hashedPassword): void
     {

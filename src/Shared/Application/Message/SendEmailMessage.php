@@ -10,6 +10,5 @@ final readonly class SendEmailMessage
         public string $recipient,
         public string $subject,
         public string $body,
-    ) {
-    }
+    ) {}
 }

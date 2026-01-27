@@ -13,8 +13,7 @@ final readonly class SymfonyMailer implements Mailer
 {
     public function __construct(
         private MessageBusInterface $messageBus,
-    ) {
-    }
+    ) {}
 
     public function send(Email $email): void
     {

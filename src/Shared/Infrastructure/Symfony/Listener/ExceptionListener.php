@@ -51,12 +51,14 @@ final readonly class ExceptionListener
         if ($exception instanceof AccessDeniedException) {
             $response = new JsonResponse(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
             $event->setResponse($response);
+
             return;
         }
 
         if ($exception instanceof BadRequestHttpException) {
             $response = new JsonResponse(['message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
             $event->setResponse($response);
+
             return;
         }
 

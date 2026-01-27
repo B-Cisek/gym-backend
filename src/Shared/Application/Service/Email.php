@@ -10,7 +10,5 @@ final readonly class Email
         public string $recipient,
         public string $subject,
         public string $text,
-    )
-    {
-    }
+    ) {}
 }

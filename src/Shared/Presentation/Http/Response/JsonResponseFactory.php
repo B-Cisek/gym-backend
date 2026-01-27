@@ -34,7 +34,7 @@ final class JsonResponseFactory
     {
         return new JsonResponse(data: [
             'token' => $authTokenPair->token,
-            'refresh_token' => $authTokenPair->refreshToken
+            'refresh_token' => $authTokenPair->refreshToken,
         ], status: Response::HTTP_OK);
     }
 }

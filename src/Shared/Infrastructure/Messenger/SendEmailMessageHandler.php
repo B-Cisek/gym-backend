@@ -14,8 +14,7 @@ final readonly class SendEmailMessageHandler
         private MailerInterface $mailer,
         private string $senderEmail,
         private string $senderName,
-    ) {
-    }
+    ) {}
 
     public function __invoke(SendEmailMessage $message): void
     {
@@ -23,7 +22,8 @@ final readonly class SendEmailMessageHandler
             ->from(sprintf('%s <%s>', $this->senderName, $this->senderEmail))
             ->to($message->recipient)
             ->subject($message->subject)
-            ->text($message->body);
+            ->text($message->body)
+        ;
 
         $this->mailer->send($email);
     }

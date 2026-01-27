@@ -14,8 +14,7 @@ final readonly class SendWelcomeEmailListener
     public function __construct(
         private UserRepository $userRepository,
         private Mailer $mailer,
-    ) {
-    }
+    ) {}
 
     public function __invoke(UserRegistered $event): void
     {

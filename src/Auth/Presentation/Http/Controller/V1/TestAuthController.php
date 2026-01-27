@@ -13,7 +13,7 @@ final readonly class TestAuthController
     public function test(): JsonResponse
     {
         return new JsonResponse([
-            'message' => 'CONTENT ONLY FOR AUTHENTICATED USERS'
+            'message' => 'CONTENT ONLY FOR AUTHENTICATED USERS',
         ]);
     }
 }
