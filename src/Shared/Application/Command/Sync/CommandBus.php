@@ -6,5 +6,5 @@ namespace App\Shared\Application\Command\Sync;
 
 interface CommandBus
 {
-    public function dispatch(Command $command): void;
+    public function dispatch(Command $command): mixed;
 }
