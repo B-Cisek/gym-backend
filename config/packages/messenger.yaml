@@ -35,6 +35,13 @@ framework:
         routing:
             App\Shared\Application\Command\Sync\Command: sync
             App\Shared\Application\Command\Async\Command: async
+            App\Shared\Application\Message\SendEmailMessage: async
+
+when@dev:
+    framework:
+        messenger:
+            routing:
+                App\Shared\Application\Message\SendEmailMessage: sync
 
 # when@test:
 #    framework:

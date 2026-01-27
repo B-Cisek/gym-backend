@@ -10,6 +10,7 @@ use App\Shared\Infrastructure\Symfony\Response\ValidationErrorMapper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
@@ -49,6 +50,12 @@ final readonly class ExceptionListener
         // TODO: Handle AccessDeniedException and rest of lexik_jwt_authentication exceptions
         if ($exception instanceof AccessDeniedException) {
             $response = new JsonResponse(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+            $event->setResponse($response);
+            return;
+        }
+
+        if ($exception instanceof BadRequestHttpException) {
+            $response = new JsonResponse(['message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
             $event->setResponse($response);
             return;
         }
