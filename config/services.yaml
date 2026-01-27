@@ -9,6 +9,7 @@
 parameters:
     mailer.sender_email: '%env(MAILER_SENDER_EMAIL)%'
     mailer.sender_name: '%env(MAILER_SENDER_NAME)%'
+    auth.refresh_token_ttl: '%gesdinet_jwt_refresh_token.ttl%'
 
 services:
     # default configuration for services in *this* file
@@ -45,6 +46,11 @@ services:
             $senderName: '%mailer.sender_name%'
         tags:
             - { name: messenger.message_handler }
+
+    # Auth Services
+    App\Auth\Infrastructure\Security\AuthTokenPairGenerator:
+        arguments:
+            $refreshTokenTtl: '%auth.refresh_token_ttl%'
 
     # Event Listeners
     App\Auth\Infrastructure\EventListener\SendWelcomeEmailListener:

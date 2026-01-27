@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Auth\Presentation\Http\Controller\V1;
 
 use App\Auth\Application\Command\Sync\RegisterMember;
-use App\Auth\Domain\Email;
-use App\Auth\Domain\TokenGeneratorInterface;
+use App\Auth\Application\Service\AuthTokenPairGeneratorInterface;
 use App\Auth\Domain\UserAlreadyExistsException;
-use App\Auth\Domain\UserRepository;
+use App\Auth\Infrastructure\Doctrine\Repository\UserRepository;
 use App\Auth\Presentation\Http\Request\V1\MemberRegisterRequest;
 use App\Shared\Application\Command\Sync\CommandBus;
 use App\Shared\Presentation\Http\Response\JsonResponseFactory;
@@ -21,7 +20,7 @@ final readonly class RegisterMemberController
 {
     public function __construct(
         private CommandBus $commandBus,
-        private TokenGeneratorInterface $tokenGenerator,
+        private AuthTokenPairGeneratorInterface $authTokenPairGenerator,
         private UserRepository $userRepository
     ) {}
 
@@ -34,10 +33,15 @@ final readonly class RegisterMemberController
                 password: $request->password,
             )->toRegisterUser());
 
-            $user = $this->userRepository->getByEmail(Email::fromString($request->email));
-            $token = $this->tokenGenerator->generateFor($user->id);
+            $user = $this->userRepository->getByEmail($request->email);
 
-            return JsonResponseFactory::signedIn(token: $token);
+            if (!$user) {
+                throw new \RuntimeException('User with given email not found.', Response::HTTP_NOT_FOUND);
+            }
+
+            $tokenPair = $this->authTokenPairGenerator->generateFor($user->getId()->toString());
+
+            return JsonResponseFactory::signedIn($tokenPair);
         } catch (UserAlreadyExistsException $e) {
             return JsonResponseFactory::error($e->getMessage(), Response::HTTP_CONFLICT);
         }

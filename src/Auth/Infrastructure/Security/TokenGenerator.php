@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Auth\Infrastructure\Doctrine\Security;
+namespace App\Auth\Infrastructure\Security;
 
 use App\Auth\Domain\TokenGeneratorInterface;
 use App\Auth\Infrastructure\Doctrine\Entity\User;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Presentation\Http\Response;
 
+use App\Auth\Application\Service\AuthTokenPair;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,8 +30,11 @@ final class JsonResponseFactory
         return new JsonResponse(data: ['success' => false, 'message' => $message], status: $status);
     }
 
-    public static function signedIn(string $token): JsonResponse
+    public static function signedIn(AuthTokenPair $authTokenPair): JsonResponse
     {
-        return new JsonResponse(data: ['token' => $token], status: Response::HTTP_OK);
+        return new JsonResponse(data: [
+            'token' => $authTokenPair->token,
+            'refresh_token' => $authTokenPair->refreshToken
+        ], status: Response::HTTP_OK);
     }
 }
