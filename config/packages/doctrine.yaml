@@ -1,11 +1,9 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
-
-        # IMPORTANT: You MUST configure your server version,
-        # either here or in the DATABASE_URL env var (see .env file)
         server_version: '18'
-
+        options:
+            timezone: '%env(APP_TZ)%'
         profiling_collect_backtrace: '%kernel.debug%'
     orm:
         validate_xml_mapping: true
@@ -14,12 +12,12 @@ doctrine:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         mappings:
-#            App:
-#                type: attribute
-#                is_bundle: false
-#                dir: '%kernel.project_dir%/src/Entity'
-#                prefix: 'App\Entity'
-#                alias: App
+            App:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Auth/Infrastructure/Doctrine/Entity'
+                prefix: 'App\Auth\Infrastructure\Doctrine\Entity'
+                alias: Auth
         controller_resolver:
             auto_mapping: false
 

@@ -7,6 +7,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    mailer.sender_email: '%env(MAILER_SENDER_EMAIL)%'
+    mailer.sender_name: '%env(MAILER_SENDER_NAME)%'
+    auth.refresh_token_ttl: '%gesdinet_jwt_refresh_token.ttl%'
 
 services:
     # default configuration for services in *this* file
@@ -21,3 +24,35 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    _instanceof:
+        App\Shared\Application\Command\Sync\CommandHandler:
+            tags:
+                - { name: 'messenger.message_handler', bus: command.sync.bus }
+        App\Shared\Application\Command\Async\CommandHandler:
+            tags:
+                - { name: 'messenger.message_handler', bus: command.async.bus }
+
+    # Exception Listener
+    App\Shared\Infrastructure\Symfony\Listener\ExceptionListener:
+        arguments:
+            $environment: '%kernel.environment%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, priority: 10 }
+
+    App\Shared\Infrastructure\Messenger\SendEmailMessageHandler:
+        arguments:
+            $senderEmail: '%mailer.sender_email%'
+            $senderName: '%mailer.sender_name%'
+        tags:
+            - { name: messenger.message_handler }
+
+    # Auth Services
+    App\Auth\Infrastructure\Security\AuthTokenPairGenerator:
+        arguments:
+            $refreshTokenTtl: '%auth.refresh_token_ttl%'
+
+    # Event Listeners
+    App\Auth\Infrastructure\EventListener\SendWelcomeEmailListener:
+        tags:
+            - { name: kernel.event_listener, event: App\Auth\Domain\UserRegistered }

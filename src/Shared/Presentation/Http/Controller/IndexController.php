@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Presentation\Http;
+namespace App\Shared\Presentation\Http\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

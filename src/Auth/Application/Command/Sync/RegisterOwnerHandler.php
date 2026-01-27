@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Auth\Application\Command\Sync;
+
+use App\Shared\Application\Command\Sync\CommandHandler;
+
+final readonly class RegisterOwnerHandler implements CommandHandler
+{
+    public function __construct(
+        private RegisterUserHandler $registerUserHandler,
+    ) {}
+
+    public function __invoke(RegisterOwner $command): string
+    {
+        return ($this->registerUserHandler)($command->toRegisterUser());
+    }
+}

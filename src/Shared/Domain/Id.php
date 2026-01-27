@@ -26,7 +26,7 @@ readonly class Id
     private function valid(): void
     {
         if (!preg_match(self::ID_FORMAT, $this->id)) {
-            throw new InvalidIdException();
+            throw new InvalidIdException($this->id);
         }
     }
 }

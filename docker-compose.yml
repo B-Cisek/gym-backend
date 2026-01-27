@@ -8,6 +8,8 @@ services:
             args:
                 USER_ID: ${USER_ID:-1000}
                 GROUP_ID: ${GROUP_ID:-1000}
+        environment:
+            PHP_DATE_TIMEZONE: ${APP_TZ:-Europe/Warsaw}
         ports:
             - "80:8080"
         volumes:
@@ -25,6 +27,7 @@ services:
             POSTGRES_DB: ${POSTGRES_DB:-gym}
             POSTGRES_USER: ${POSTGRES_USER:-gym_user}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+            TZ: ${APP_TZ:-Europe/Warsaw}
         volumes:
             - postgres_data:/var/lib/postgresql/data
         ports:
@@ -38,6 +41,17 @@ services:
         command: redis-server --appendonly yes
         volumes:
             - redis_data:/data
+        ports:
+            - "6379:6379"
+        networks:
+            - gym
+
+    mailpit:
+        container_name: gym-mailpit
+        image: axllent/mailpit:latest
+        ports:
+            - "8025:8025"  # Web UI
+            - "1025:1025"  # SMTP
         networks:
             - gym
 
