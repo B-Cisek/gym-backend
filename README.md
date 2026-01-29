@@ -2,11 +2,12 @@
 
 ## Opis projektu
 
-Gym Management SaaS to multi-tenant system dla sieci siłowni i trenerów personalnych, pozwalający na zarządzanie klientami, karnetami, grafikiem zajęć oraz check-inami. Aplikacja posiada trzy główne frontendy:
+Gym Management SaaS to multi-tenant system dla sieci siłowni, pozwalający na zarządzanie klientami, karnetami, grafikiem zajęć oraz check-inami. System zapewnia dostęp poprzez dwie główne platformy:
 
-- **Web Admin (Nuxt)**: dla właścicieli i pracowników siłowni, pełne zarządzanie i raporty.
+- **Web App (Nuxt)**:
+  - Panel administracyjny dla właścicieli i pracowników siłowni (zarządzanie, raporty itp.)
+  - Panel klienta dla użytkowników preferujących przeglądarkę
 - **Mobile App (React Native)**: dla klientów i trenerów personalnych, umożliwiająca check-in, podgląd karnetu, grafik zajęć i powiadomienia.
-- **Simple Web User (Nuxt)**: dla klientów, którzy nie chcą korzystać z aplikacji mobilnej.
 
 System jest projektowany w podejściu **API-first** i z czystą architekturą.
 
