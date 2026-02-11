@@ -29,11 +29,7 @@ final readonly class TaxId implements \Stringable
 
     private function validate(string $taxId): void
     {
-        if ($taxId === '') {
-            throw new InvalidTaxIdException($taxId);
-        }
-
-        if (!preg_match('/^[A-Z0-9\-]{2,20}$/i', $taxId)) {
+        if (!preg_match('/^\d{10}$/', $taxId)) {
             throw new InvalidTaxIdException($taxId);
         }
     }
