@@ -29,7 +29,6 @@ final class GymsController extends AbstractController
     #[Route('/gyms', name: 'gyms.get', methods: ['GET'])]
     public function get(GetGyms $getGyms): JsonResponse
     {
-        sleep(1);
         $collection = $getGyms->execute($this->authContext->getOwnerId());
 
         return $this->json($collection);
