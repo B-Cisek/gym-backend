@@ -40,7 +40,6 @@ final readonly class UpdateOwnerProfileController
                 street: $request->street,
                 city: $request->city,
                 postalCode: $request->postalCode,
-                voivodeship: $request->voivodeship,
             ));
 
             return JsonResponseFactory::success();

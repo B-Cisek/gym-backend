@@ -33,7 +33,6 @@ readonly class OwnerRepository implements DomainOwnerRepository
                 street: $owner->address->street,
                 city: $owner->address->city,
                 postalCode: $owner->address->postalCode,
-                voivodeship: $owner->address->voivodeship,
             ));
             $entity = $existing;
         }

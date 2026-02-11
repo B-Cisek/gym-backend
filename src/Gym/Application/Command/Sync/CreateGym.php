@@ -11,9 +11,8 @@ final readonly class CreateGym implements Command
     public function __construct(
         public string $ownerId,
         public string $name,
-        public string $street,
-        public string $city,
-        public string $postalCode,
-        public string $voivodeship,
+        public ?string $street = null,
+        public ?string $city = null,
+        public ?string $postalCode = null,
     ) {}
 }

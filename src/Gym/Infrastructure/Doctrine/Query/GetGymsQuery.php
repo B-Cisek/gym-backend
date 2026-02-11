@@ -19,7 +19,14 @@ final readonly class GetGymsQuery implements GetGyms
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $result = $queryBuilder
-            ->select('g.id', 'g.name')
+            ->select(
+                'g.id',
+                'g.name',
+                'g.createdAt',
+                'g.address.street',
+                'g.address.city',
+                'g.address.postalCode',
+            )
             ->from(Gym::class, 'g')
             ->where('g.ownerId = :ownerId')
             ->setParameter('ownerId', $ownerId)
@@ -27,7 +34,14 @@ final readonly class GetGymsQuery implements GetGyms
             ->getArrayResult()
         ;
 
-        $gyms = array_map(fn (array $gym) => new GymResult($gym['id']->toString(), $gym['name']), $result);
+        $gyms = array_map(fn (array $gym) => new GymResult(
+            id: $gym['id']->toString(),
+            name: $gym['name'],
+            createdAt: $gym['createdAt'],
+            street: $gym['address.street'],
+            city: $gym['address.city'],
+            postalCode: $gym['address.postalCode'],
+        ), $result);
 
         return new GymCollection($gyms);
     }

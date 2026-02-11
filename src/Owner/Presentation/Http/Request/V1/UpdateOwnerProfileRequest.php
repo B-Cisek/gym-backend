@@ -23,7 +23,5 @@ final readonly class UpdateOwnerProfileRequest
         public ?string $city = null,
         #[Length(max: 20)]
         public ?string $postalCode = null,
-        #[Length(max: 100)]
-        public ?string $voivodeship = null,
     ) {}
 }

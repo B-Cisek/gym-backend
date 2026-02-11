@@ -9,7 +9,6 @@ use App\Owner\Domain\OwnerRepository;
 use App\Shared\Application\Command\Sync\CommandHandler;
 use App\Shared\Domain\Address;
 use App\Shared\Domain\Id;
-use App\Shared\Domain\Voivodeship;
 
 final readonly class UpdateOwnerHandler implements CommandHandler
 {
@@ -32,7 +31,6 @@ final readonly class UpdateOwnerHandler implements CommandHandler
                 street: $command->street,
                 city: $command->city,
                 postalCode: $command->postalCode,
-                voivodeship: Voivodeship::from($command->voivodeship)
             )
         );
 

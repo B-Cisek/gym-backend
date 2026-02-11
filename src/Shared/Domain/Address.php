@@ -11,6 +11,5 @@ final readonly class Address
         public ?string $street = null,
         public ?string $city = null,
         public ?string $postalCode = null,
-        public ?Voivodeship $voivodeship = null,
     ) {}
 }

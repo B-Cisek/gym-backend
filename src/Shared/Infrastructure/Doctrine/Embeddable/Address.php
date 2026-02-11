@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Doctrine\Embeddable;
 
 use App\Shared\Domain\Address as DomainAddress;
-use App\Shared\Domain\Voivodeship;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Embeddable;
@@ -20,8 +19,6 @@ class Address
         private ?string $city = null,
         #[Column(type: Types::STRING, length: 6, nullable: true)]
         private ?string $postalCode = null,
-        #[Column(type: Types::STRING, length: 50, nullable: true, enumType: Voivodeship::class)]
-        private ?Voivodeship $voivodeship = null,
     ) {}
 
     public static function fromDomain(DomainAddress $address): self
@@ -30,7 +27,6 @@ class Address
             street: $address->street,
             city: $address->city,
             postalCode: $address->postalCode,
-            voivodeship: $address->voivodeship,
         );
     }
 
@@ -40,7 +36,6 @@ class Address
             street: $this->street,
             city: $this->city,
             postalCode: $this->postalCode,
-            voivodeship: $this->voivodeship,
         );
     }
 
@@ -57,10 +52,5 @@ class Address
     public function getPostalCode(): ?string
     {
         return $this->postalCode;
-    }
-
-    public function getVoivodeship(): ?Voivodeship
-    {
-        return $this->voivodeship;
     }
 }

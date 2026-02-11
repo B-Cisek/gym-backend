@@ -22,7 +22,6 @@ class OwnerTransformer
                 street: $owner->address?->street,
                 city: $owner->address?->city,
                 postalCode: $owner->address?->postalCode,
-                voivodeship: $owner->address?->voivodeship,
             )),
             companyName: $owner->companyName,
             taxId: $owner->taxId,
@@ -42,7 +41,6 @@ class OwnerTransformer
                 street: $entity->getAddress()->getStreet(),
                 city: $entity->getAddress()->getCity(),
                 postalCode: $entity->getAddress()->getPostalCode(),
-                voivodeship: $entity->getAddress()->getVoivodeship(),
             )
         );
     }

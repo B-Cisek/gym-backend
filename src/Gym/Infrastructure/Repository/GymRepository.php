@@ -31,7 +31,6 @@ readonly class GymRepository implements DomainGymRepository
                 street: $gym->address->street,
                 city: $gym->address->city,
                 postalCode: $gym->address->postalCode,
-                voivodeship: $gym->address->voivodeship,
             ));
             $existing->setUpdatedAt(new \DateTimeImmutable());
             $entity = $existing;

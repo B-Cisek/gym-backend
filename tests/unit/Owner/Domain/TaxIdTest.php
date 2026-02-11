@@ -9,6 +9,11 @@ use App\Owner\Domain\TaxId;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 final class TaxIdTest extends TestCase
 {
     #[Test]
