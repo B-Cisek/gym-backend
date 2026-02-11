@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Auth\Infrastructure\Doctrine\Entity;
 
+use App\Auth\Domain\UserRole;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -109,5 +110,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $dateTimeImmutable = null): void
     {
         $this->updatedAt = $dateTimeImmutable;
+    }
+
+    public function isOwner(): bool
+    {
+        return in_array(UserRole::OWNER->value, $this->getRoles(), true);
+    }
+
+    public function isMember(): bool
+    {
+        return in_array(UserRole::MEMBER->value, $this->getRoles(), true);
     }
 }
