@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Owner\Presentation\Http\Controller\V1;
 
-use App\Auth\Infrastructure\Doctrine\Entity\User;
 use App\Owner\Application\Command\Sync\UpdateOwner;
 use App\Owner\Application\Query\GetOwnerSettings;
 use App\Owner\Domain\OwnerNotFoundException;

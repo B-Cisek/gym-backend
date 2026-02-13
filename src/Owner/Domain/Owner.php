@@ -64,7 +64,7 @@ final readonly class Owner
             firstName: $firstName ?? $this->firstName,
             lastName: $lastName ?? $this->lastName,
             email: $email ?? $this->email,
-           companyName:  $companyName ?? $this->companyName,
+            companyName: $companyName ?? $this->companyName,
             taxId: $taxId ?? $this->taxId,
             phone: $phone ?? $this->phone,
             address: new Address(

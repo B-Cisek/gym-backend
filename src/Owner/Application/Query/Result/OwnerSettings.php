@@ -16,7 +16,5 @@ final readonly class OwnerSettings
         public ?string $street = null,
         public ?string $city = null,
         public ?string $postalCode = null,
-    )
-    {
-    }
+    ) {}
 }

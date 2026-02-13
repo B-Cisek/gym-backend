@@ -33,7 +33,8 @@ final readonly class GetOwnerSettingsQuery implements GetOwnerSettings
             ->where('o.id = :ownerId')
             ->setParameter('ownerId', $ownerId)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getOneOrNullResult()
+        ;
 
         return new OwnerSettings(
             firstName: $result['firstName'],
