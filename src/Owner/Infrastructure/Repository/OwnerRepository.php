@@ -26,6 +26,9 @@ readonly class OwnerRepository implements DomainOwnerRepository
         if ($existing === null) {
             $entity = $this->transformer->fromDomain($owner);
         } else {
+            $existing->setFirstName($owner->firstName);
+            $existing->setLastName($owner->lastName);
+            $existing->setEmail($owner->email);
             $existing->setCompanyName($owner->companyName);
             $existing->setTaxId($owner->taxId);
             $existing->setPhone($owner->phone);
@@ -34,6 +37,7 @@ readonly class OwnerRepository implements DomainOwnerRepository
                 city: $owner->address->city,
                 postalCode: $owner->address->postalCode,
             ));
+            $existing->setUpdatedAt(new \DateTimeImmutable());
             $entity = $existing;
         }
 

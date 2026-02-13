@@ -21,9 +21,12 @@ final readonly class UpdateOwnerHandler implements CommandHandler
      */
     public function __invoke(UpdateOwner $command): void
     {
-        $owner = $this->repository->getByUserId(new Id($command->userId));
+        $owner = $this->repository->get(new Id($command->ownerId));
 
         $updated = $owner->update(
+            firstName: $command->firstName,
+            lastName: $command->lastName,
+            email: $command->email,
             companyName: $command->companyName,
             taxId: $command->taxId,
             phone: $command->phone,
@@ -31,7 +34,7 @@ final readonly class UpdateOwnerHandler implements CommandHandler
                 street: $command->street,
                 city: $command->city,
                 postalCode: $command->postalCode,
-            )
+            ),
         );
 
         $this->repository->save($updated);

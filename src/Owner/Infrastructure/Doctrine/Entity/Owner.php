@@ -41,6 +41,12 @@ class Owner
         private ?string $taxId = null,
         #[Column(type: Types::STRING, length: 20, nullable: true)]
         private ?string $phone = null,
+        #[Column(type: Types::STRING, length: 100, nullable: true)]
+        private ?string $firstName = null,
+        #[Column(type: Types::STRING, length: 100, nullable: true)]
+        private ?string $lastName = null,
+        #[Column(type: Types::STRING, length: 255, nullable: true)]
+        private ?string $email = null,
     ) {
         $this->createdAt = new \DateTimeImmutable();
     }
@@ -118,5 +124,41 @@ class Owner
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): Owner
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): Owner
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): Owner
+    {
+        $this->email = $email;
+
+        return $this;
     }
 }

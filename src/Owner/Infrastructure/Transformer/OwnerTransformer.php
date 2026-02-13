@@ -26,6 +26,9 @@ class OwnerTransformer
             companyName: $owner->companyName,
             taxId: $owner->taxId,
             phone: $owner->phone,
+            firstName: $owner->firstName,
+            lastName: $owner->lastName,
+            email: $owner->email,
         );
     }
 
@@ -34,6 +37,9 @@ class OwnerTransformer
         return DomainOwner::restore(
             id: new Id($entity->getId()->toString()),
             userId: new Id($entity->getUserId()->toString()),
+            firstName: $entity->getFirstName(),
+            lastName: $entity->getLastName(),
+            email: $entity->getEmail(),
             companyName: $entity->getCompanyName(),
             taxId: $entity->getTaxId(),
             phone: $entity->getPhone(),
