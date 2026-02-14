@@ -19,32 +19,32 @@ final class TaxIdTest extends TestCase
     #[Test]
     public function it_creates_from_valid_ten_digit_nip(): void
     {
-        $taxId = TaxId::fromString('1234567890');
+        $taxId = TaxId::fromString('1234563218');
 
-        self::assertSame('1234567890', $taxId->value);
+        self::assertSame('1234563218', $taxId->value);
     }
 
     #[Test]
     public function it_returns_value_as_string(): void
     {
-        $taxId = TaxId::fromString('1234567890');
+        $taxId = TaxId::fromString('1234563218');
 
-        self::assertSame('1234567890', (string) $taxId);
+        self::assertSame('1234563218', (string) $taxId);
     }
 
     #[Test]
     public function it_trims_whitespace(): void
     {
-        $taxId = TaxId::fromString('  1234567890  ');
+        $taxId = TaxId::fromString('  1234563218  ');
 
-        self::assertSame('1234567890', $taxId->value);
+        self::assertSame('1234563218', $taxId->value);
     }
 
     #[Test]
     public function it_returns_true_when_equal(): void
     {
-        $taxId = TaxId::fromString('1234567890');
-        $other = TaxId::fromString('1234567890');
+        $taxId = TaxId::fromString('1234563218');
+        $other = TaxId::fromString('1234563218');
 
         self::assertTrue($taxId->equals($other));
     }
@@ -52,7 +52,7 @@ final class TaxIdTest extends TestCase
     #[Test]
     public function it_returns_false_when_not_equal(): void
     {
-        $taxId = TaxId::fromString('1234567890');
+        $taxId = TaxId::fromString('1234563218');
         $other = TaxId::fromString('9999999999');
 
         self::assertFalse($taxId->equals($other));
@@ -87,7 +87,7 @@ final class TaxIdTest extends TestCase
     {
         $this->expectException(InvalidTaxIdException::class);
 
-        TaxId::fromString('12345678901');
+        TaxId::fromString('12345632181');
     }
 
     #[Test]

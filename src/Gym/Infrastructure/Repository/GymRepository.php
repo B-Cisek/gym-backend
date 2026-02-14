@@ -10,7 +10,6 @@ use App\Gym\Domain\GymRepository as DomainGymRepository;
 use App\Gym\Infrastructure\Doctrine\Repository\GymRepository as DoctrineGymRepository;
 use App\Gym\Infrastructure\Transformer\GymTransformer;
 use App\Shared\Domain\Id;
-use App\Shared\Infrastructure\Doctrine\Embeddable\Address;
 
 readonly class GymRepository implements DomainGymRepository
 {
@@ -26,19 +25,16 @@ readonly class GymRepository implements DomainGymRepository
         if ($existing === null) {
             $entity = $this->transformer->fromDomain($gym);
         } else {
-            $existing->setName($gym->name);
-            $existing->setAddress(new Address(
-                street: $gym->address->street,
-                city: $gym->address->city,
-                postalCode: $gym->address->postalCode,
-            ));
-            $existing->setUpdatedAt(new \DateTimeImmutable());
+            $this->transformer->updateEntity($existing, $gym);
             $entity = $existing;
         }
 
         $this->doctrineRepository->save($entity);
     }
 
+    /**
+     * @throws GymNotFoundException
+     */
     public function get(Id $id): DomainGym
     {
         $entity = $this->doctrineRepository->get($id->toString());

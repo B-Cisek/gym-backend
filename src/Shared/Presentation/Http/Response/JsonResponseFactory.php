@@ -7,30 +7,48 @@ namespace App\Shared\Presentation\Http\Response;
 use App\Auth\Application\Service\AuthTokenPair;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
-final class JsonResponseFactory
+final readonly class JsonResponseFactory
 {
-    public static function success(int $status = Response::HTTP_OK): JsonResponse
+    public function __construct(
+        private SerializerInterface $serializer,
+    ) {}
+
+    public function success(int $status = Response::HTTP_OK): JsonResponse
     {
         return new JsonResponse(data: ['success' => true], status: $status);
     }
 
-    public static function created(): JsonResponse
+    /**
+     * @param array<string, string> $headers
+     * @param array<string, mixed>  $context
+     */
+    public function data(mixed $data, int $status = Response::HTTP_OK, array $headers = [], array $context = []): JsonResponse
     {
-        return new JsonResponse(null, Response::HTTP_CREATED);
+        $json = $this->serializer->serialize($data, 'json', array_merge([
+            'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
+        ], $context));
+
+        return new JsonResponse($json, $status, $headers, true);
     }
 
-    public static function noContent(): JsonResponse
+    public function created(): JsonResponse
     {
-        return new JsonResponse(data: null, status: Response::HTTP_OK);
+        return new JsonResponse(data: ['success' => true], status: Response::HTTP_CREATED);
     }
 
-    public static function error(string $message, int $status = Response::HTTP_BAD_REQUEST): JsonResponse
+    public function noContent(): JsonResponse
+    {
+        return new JsonResponse(data: null, status: Response::HTTP_NO_CONTENT);
+    }
+
+    public function error(string $message, int $status = Response::HTTP_BAD_REQUEST): JsonResponse
     {
         return new JsonResponse(data: ['success' => false, 'message' => $message], status: $status);
     }
 
-    public static function signedIn(AuthTokenPair $authTokenPair): JsonResponse
+    public function signedIn(AuthTokenPair $authTokenPair): JsonResponse
     {
         return new JsonResponse(data: [
             'token' => $authTokenPair->token,

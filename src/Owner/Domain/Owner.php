@@ -67,11 +67,7 @@ final readonly class Owner
             companyName: $companyName ?? $this->companyName,
             taxId: $taxId ?? $this->taxId,
             phone: $phone ?? $this->phone,
-            address: new Address(
-                street: $address->street ?? $this->address?->street,
-                city: $address->city ?? $this->address?->city,
-                postalCode: $address->postalCode ?? $this->address?->postalCode,
-            ),
+            address: $address ?? $this->address,
         );
     }
 }

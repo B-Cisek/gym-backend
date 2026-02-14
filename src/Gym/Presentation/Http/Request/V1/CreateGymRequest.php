@@ -14,9 +14,9 @@ final readonly class CreateGymRequest
         #[NotBlank]
         #[Length(min: 2, max: 255)]
         public string $name,
-        #[Length(max: 255)]
+        #[Length(max: 100)]
         public ?string $street = null,
-        #[Length(max: 20)]
+        #[Length(max: 100)]
         public ?string $city = null,
         #[Length(exactly: 6)]
         #[Regex(pattern: '/^[0-9]{2}-[0-9]{3}$/', message: 'Invalid postal code format, eg. XX-XXX)')]

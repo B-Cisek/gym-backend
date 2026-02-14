@@ -6,6 +6,7 @@ namespace App\Owner\Infrastructure\Doctrine\Query;
 
 use App\Owner\Application\Query\GetOwnerSettings;
 use App\Owner\Application\Query\Result\OwnerSettings;
+use App\Owner\Domain\OwnerNotFoundException;
 use App\Owner\Infrastructure\Doctrine\Entity\Owner;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -35,6 +36,10 @@ final readonly class GetOwnerSettingsQuery implements GetOwnerSettings
             ->getQuery()
             ->getOneOrNullResult()
         ;
+
+        if ($result === null) {
+            throw new OwnerNotFoundException();
+        }
 
         return new OwnerSettings(
             firstName: $result['firstName'],

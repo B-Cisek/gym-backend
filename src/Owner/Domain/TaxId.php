@@ -32,5 +32,27 @@ final readonly class TaxId implements \Stringable
         if (!preg_match('/^\d{10}$/', $taxId)) {
             throw new InvalidTaxIdException($taxId);
         }
+
+        if (!$this->isChecksumIsValid()) {
+            throw new InvalidTaxIdException($taxId);
+        }
+    }
+
+    private function isChecksumIsValid(): bool
+    {
+        $weights = [6, 5, 7, 2, 3, 4, 5, 6, 7];
+        $sum = 0;
+
+        for ($i = 0; $i < 9; ++$i) {
+            $sum += (int) $this->value[$i] * $weights[$i];
+        }
+
+        $control = $sum % 11;
+
+        if ($control === 10 || (int) $this->value[9] !== $control) {
+            return false;
+        }
+
+        return true;
     }
 }

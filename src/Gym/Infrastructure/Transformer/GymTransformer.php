@@ -22,6 +22,13 @@ class GymTransformer
         );
     }
 
+    public function updateEntity(GymEntity $entity, DomainGym $gym): void
+    {
+        $entity->setName($gym->name);
+        $entity->setAddress(AddressEmbeddable::fromDomain($gym->address));
+        $entity->setUpdatedAt(new \DateTimeImmutable());
+    }
+
     public function toDomain(GymEntity $entity): DomainGym
     {
         return DomainGym::restore(

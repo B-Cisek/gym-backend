@@ -10,6 +10,9 @@ interface GymRepository
 {
     public function save(Gym $gym): void;
 
+    /**
+     * @throws GymNotFoundException
+     */
     public function get(Id $id): Gym;
 
     /**

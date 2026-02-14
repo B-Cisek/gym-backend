@@ -15,6 +15,7 @@ final readonly class AuthContext
         private JWTTokenManagerInterface $jwtTokenManager,
     ) {}
 
+    // TODO: In the future, handle for non owner users, now it explodes when user is not owner
     public function getOwnerId(): string
     {
         return $this->payload()['owner_id'];

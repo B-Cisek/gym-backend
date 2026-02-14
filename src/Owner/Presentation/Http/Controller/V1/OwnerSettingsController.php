@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Owner\Presentation\Http\Controller\V1;
 
+use App\Auth\Domain\UserRole;
 use App\Owner\Application\Command\Sync\UpdateOwner;
 use App\Owner\Application\Query\GetOwnerSettings;
 use App\Owner\Domain\OwnerNotFoundException;
@@ -11,28 +12,30 @@ use App\Owner\Presentation\Http\Request\V1\UpdateOwnerSettingsRequest;
 use App\Shared\Application\Command\Sync\CommandBus;
 use App\Shared\Infrastructure\Security\AuthContext;
 use App\Shared\Presentation\Http\Response\JsonResponseFactory;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-final class OwnerSettingsController extends AbstractController
+final readonly class OwnerSettingsController
 {
     public function __construct(
-        private readonly CommandBus $commandBus,
-        private readonly AuthContext $authContext,
+        private CommandBus $commandBus,
+        private AuthContext $authContext,
+        private JsonResponseFactory $responseFactory,
     ) {}
 
     #[Route(path: '/owner/settings', name: 'owner.get', methods: ['GET'])]
+    #[IsGranted(UserRole::OWNER->value)]
     public function get(GetOwnerSettings $query): JsonResponse
     {
         $result = $query->execute($this->authContext->getOwnerId());
 
-        return $this->json($result);
+        return $this->responseFactory->data($result);
     }
 
     #[Route(path: '/owner/settings', name: 'owner.update', methods: ['PATCH'])]
+    #[IsGranted(UserRole::OWNER->value)]
     public function update(#[MapRequestPayload] UpdateOwnerSettingsRequest $request): JsonResponse
     {
         try {
@@ -49,9 +52,9 @@ final class OwnerSettingsController extends AbstractController
                 postalCode: $request->postalCode,
             ));
 
-            return JsonResponseFactory::success();
+            return $this->responseFactory->success();
         } catch (OwnerNotFoundException $e) {
-            return JsonResponseFactory::error($e->getMessage(), Response::HTTP_NOT_FOUND);
+            return $this->responseFactory->error($e->getMessage(), $e->getHttpStatusCode());
         }
     }
 }
