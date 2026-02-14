@@ -56,3 +56,7 @@ services:
     App\Auth\Infrastructure\EventListener\SendWelcomeEmailListener:
         tags:
             - { name: kernel.event_listener, event: App\Auth\Domain\UserRegistered }
+
+    App\Owner\Infrastructure\EventListener\CreateOwnerOnUserRegisteredListener:
+        tags:
+            - { name: kernel.event_listener, event: App\Auth\Domain\UserRegistered }

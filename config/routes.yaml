@@ -9,3 +9,13 @@ auth_v1:
     resource: ../src/Auth/Presentation/Http/Controller/V1/
     prefix: /api/v1
     type: attribute
+
+owner_v1:
+    resource: ../src/Owner/Presentation/Http/Controller/V1/
+    prefix: /api/v1
+    type: attribute
+
+gym_v1:
+    resource: ../src/Gym/Presentation/Http/Controller/V1/
+    prefix: /api/v1
+    type: attribute

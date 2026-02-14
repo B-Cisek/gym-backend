@@ -1,5 +1,5 @@
-# MVP
-# Gym SaaS – podsumowanie architektury 
+# Gym SaaS – podsumowanie architektury (MVP)
+
 ## 1. Cel systemu
 
 System SaaS do zarządzania siecią siłowni:
@@ -278,5 +278,3 @@ Request → Controller (Presentation)
 ```
 
 ---
-
-**Status**: architektura gotowa do implementacji 🚀

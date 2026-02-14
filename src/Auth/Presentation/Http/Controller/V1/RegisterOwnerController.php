@@ -11,7 +11,6 @@ use App\Auth\Presentation\Http\Request\V1\OwnerRegisterRequest;
 use App\Shared\Application\Command\Sync\CommandBus;
 use App\Shared\Presentation\Http\Response\JsonResponseFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -20,6 +19,7 @@ final readonly class RegisterOwnerController
     public function __construct(
         private CommandBus $commandBus,
         private AuthTokenPairGeneratorInterface $authTokenPairGenerator,
+        private JsonResponseFactory $responseFactory,
     ) {}
 
     #[Route('/auth/owner/register', methods: ['POST'])]
@@ -33,9 +33,9 @@ final readonly class RegisterOwnerController
 
             $tokenPair = $this->authTokenPairGenerator->generateFor($userId);
 
-            return JsonResponseFactory::signedIn($tokenPair);
+            return $this->responseFactory->signedIn($tokenPair);
         } catch (UserAlreadyExistsException $e) {
-            return JsonResponseFactory::error($e->getMessage(), Response::HTTP_CONFLICT);
+            return $this->responseFactory->error($e->getMessage(), $e->getHttpStatusCode());
         }
     }
 }
