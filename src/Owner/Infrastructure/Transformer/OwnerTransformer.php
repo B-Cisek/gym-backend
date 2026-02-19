@@ -29,6 +29,7 @@ class OwnerTransformer
             firstName: $owner->firstName,
             lastName: $owner->lastName,
             email: $owner->email,
+            stripeCustomerId: $owner->stripeCustomerId
         );
     }
 
@@ -47,7 +48,8 @@ class OwnerTransformer
                 street: $entity->getAddress()->getStreet(),
                 city: $entity->getAddress()->getCity(),
                 postalCode: $entity->getAddress()->getPostalCode(),
-            )
+            ),
+            stripeCustomerId: $entity->getStripeCustomerId()
         );
     }
 }

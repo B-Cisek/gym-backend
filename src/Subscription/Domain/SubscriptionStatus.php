@@ -16,22 +16,21 @@ enum SubscriptionStatus: string
 
     public function isIncomplete(): bool
     {
-        return self::INCOMPLETE === $this;
+        return $this === self::INCOMPLETE;
     }
 
     public function isTrialing(): bool
     {
-        return self::TRIALING === $this;
+        return $this === self::TRIALING;
     }
 
     public function isActive(): bool
     {
-        return self::ACTIVE === $this;
+        return $this === self::ACTIVE;
     }
 
     public function isCanceled(): bool
     {
-        return self::CANCELED === $this;
+        return $this === self::CANCELED;
     }
 }
-

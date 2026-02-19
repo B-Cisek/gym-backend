@@ -18,7 +18,8 @@ final readonly class Owner
         public ?string $companyName = null,
         public ?string $taxId = null,
         public ?string $phone = null,
-        public ?Address $address = null
+        public ?Address $address = null,
+        public ?string $stripeCustomerId = null,
     ) {}
 
     public static function create(
@@ -31,8 +32,9 @@ final readonly class Owner
         ?string $taxId = null,
         ?string $phone = null,
         ?Address $address = null,
+        ?string $stripeCustomerId = null,
     ): self {
-        return new self($id, $userId, $firstName, $lastName, $email, $companyName, $taxId, $phone, $address);
+        return new self($id, $userId, $firstName, $lastName, $email, $companyName, $taxId, $phone, $address, $stripeCustomerId);
     }
 
     public static function restore(
@@ -45,8 +47,9 @@ final readonly class Owner
         ?string $taxId,
         ?string $phone,
         ?Address $address,
+        ?string $stripeCustomerId,
     ): self {
-        return new self($id, $userId, $firstName, $lastName, $email, $companyName, $taxId, $phone, $address);
+        return new self($id, $userId, $firstName, $lastName, $email, $companyName, $taxId, $phone, $address, $stripeCustomerId);
     }
 
     public function update(

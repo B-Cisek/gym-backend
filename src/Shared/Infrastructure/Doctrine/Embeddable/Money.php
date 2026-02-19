@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Subscription\Infrastructure\Doctrine\Embeddable;
+namespace App\Shared\Infrastructure\Doctrine\Embeddable;
 
 use App\Subscription\Domain\Currency;
 use Doctrine\DBAL\Types\Types;
@@ -17,8 +17,7 @@ class Money
         private int $value,
         #[Column(enumType: Currency::class)]
         private Currency $currency,
-    ) {
-    }
+    ) {}
 
     public function getValue(): int
     {

@@ -10,6 +10,8 @@ parameters:
     mailer.sender_email: '%env(MAILER_SENDER_EMAIL)%'
     mailer.sender_name: '%env(MAILER_SENDER_NAME)%'
     auth.refresh_token_ttl: '%gesdinet_jwt_refresh_token.ttl%'
+    stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe.webhook_secret: '%env(STRIPE_WEBHOOK_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -32,6 +34,8 @@ services:
         App\Shared\Application\Command\Async\CommandHandler:
             tags:
                 - { name: 'messenger.message_handler', bus: command.async.bus }
+        App\Subscription\Application\Service\StripeWebhookEventHandlerInterface:
+            tags: ['stripe.webhook_event_handler']
 
     # Exception Listener
     App\Shared\Infrastructure\Symfony\Listener\ExceptionListener:
@@ -60,3 +64,10 @@ services:
     App\Owner\Infrastructure\EventListener\CreateOwnerOnUserRegisteredListener:
         tags:
             - { name: kernel.event_listener, event: App\Auth\Domain\UserRegistered }
+
+    # Subscription Services
+    App\Subscription\Infrastructure\Stripe\StripeGateway:
+        arguments:
+            $checkoutSuccessUrl: '%env(STRIPE_CHECKOUT_SUCCESS_URL)%'
+            $checkoutCancelUrl: '%env(STRIPE_CHECKOUT_CANCEL_URL)%'
+            $portalReturnUrl: '%env(STRIPE_PORTAL_RETURN_URL)%'
