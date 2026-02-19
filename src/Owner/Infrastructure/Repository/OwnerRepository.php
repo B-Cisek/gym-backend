@@ -33,10 +33,11 @@ readonly class OwnerRepository implements DomainOwnerRepository
             $existing->setTaxId($owner->taxId);
             $existing->setPhone($owner->phone);
             $existing->setAddress(new Address(
-                street: $owner->address->street,
-                city: $owner->address->city,
-                postalCode: $owner->address->postalCode,
+                street: $owner->address?->street,
+                city: $owner->address?->city,
+                postalCode: $owner->address?->postalCode,
             ));
+            $existing->setStripeCustomerId($owner->stripeCustomerId);
             $existing->setUpdatedAt(new \DateTimeImmutable());
             $entity = $existing;
         }

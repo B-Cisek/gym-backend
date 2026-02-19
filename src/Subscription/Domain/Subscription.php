@@ -7,7 +7,7 @@ namespace App\Subscription\Domain;
 use App\Shared\Domain\Id;
 use DateTimeImmutable;
 
-class Subscription
+final readonly class Subscription
 {
     private function __construct(
         public Id $id,
@@ -15,10 +15,18 @@ class Subscription
         public SubscriptionStatus $status,
         public DateTimeImmutable $startTime,
         public DateTimeImmutable $endTime,
-        public DateTimeImmutable $cancelTime
-    )
-    {
+        public ?DateTimeImmutable $cancelTime,
+    ) {}
 
+    public static function restore(
+        Id $id,
+        Id $ownerId,
+        SubscriptionStatus $status,
+        DateTimeImmutable $startTime,
+        DateTimeImmutable $endTime,
+        ?DateTimeImmutable $cancelTime,
+    ): self {
+        return new self($id, $ownerId, $status, $startTime, $endTime, $cancelTime);
     }
 
     public function isActive(): bool

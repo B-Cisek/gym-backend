@@ -39,8 +39,8 @@ doctrine:
             Subscription:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Subscription/Domain'
-                prefix: 'App\Subscription\Domain'
+                dir: '%kernel.project_dir%/src/Subscription/Infrastructure/Doctrine/Entity'
+                prefix: 'App\Subscription\Infrastructure\Doctrine\Entity'
                 alias: Subscription
         controller_resolver:
             auto_mapping: false

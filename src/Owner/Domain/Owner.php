@@ -71,6 +71,23 @@ final readonly class Owner
             taxId: $taxId ?? $this->taxId,
             phone: $phone ?? $this->phone,
             address: $address ?? $this->address,
+            stripeCustomerId: $this->stripeCustomerId,
+        );
+    }
+
+    public function withStripeCustomerId(string $stripeCustomerId): self
+    {
+        return new self(
+            id: $this->id,
+            userId: $this->userId,
+            firstName: $this->firstName,
+            lastName: $this->lastName,
+            email: $this->email,
+            companyName: $this->companyName,
+            taxId: $this->taxId,
+            phone: $this->phone,
+            address: $this->address,
+            stripeCustomerId: $stripeCustomerId,
         );
     }
 }

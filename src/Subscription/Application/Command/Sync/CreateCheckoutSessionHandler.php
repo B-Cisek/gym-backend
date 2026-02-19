@@ -8,9 +8,9 @@ use App\Owner\Domain\OwnerRepository;
 use App\Shared\Application\Command\Sync\CommandHandler;
 use App\Shared\Domain\Id;
 use App\Subscription\Application\Service\StripeGatewayInterface;
+use App\Subscription\Domain\PlanPriceRepository;
 use App\Subscription\Domain\SubscriptionAlreadyExistsException;
 use App\Subscription\Domain\SubscriptionRepository;
-use App\Subscription\Infrastructure\Doctrine\Repository\PlanPriceRepository;
 
 final readonly class CreateCheckoutSessionHandler implements CommandHandler
 {
@@ -31,21 +31,19 @@ final readonly class CreateCheckoutSessionHandler implements CommandHandler
             throw new SubscriptionAlreadyExistsException();
         }
 
-        $planPrice = $this->planPriceRepository->get($command->planPriceId);
+        $planPrice = $this->planPriceRepository->get(new Id($command->planPriceId));
 
-        $stripeCustomerId = $owner->getStripeCustomerId();
+        $stripeCustomerId = $owner->stripeCustomerId;
 
         if ($stripeCustomerId === null) {
             $stripeCustomerId = $this->stripeGateway->createCustomer(
-                $owner->getEmail() ?? '',
-                (string) $owner->getId(),
+                $owner->email ?? '',
+                $owner->id->toString(),
             );
-            $owner->setStripeCustomerId($stripeCustomerId);
+            $owner = $owner->withStripeCustomerId($stripeCustomerId);
             $this->ownerRepository->save($owner);
         }
 
-        $stripePriceId = $planPrice->getStripeId();
-
-        return $this->stripeGateway->createCheckoutSession($stripeCustomerId, $stripePriceId);
+        return $this->stripeGateway->createCheckoutSession($stripeCustomerId, $planPrice->stripeId);
     }
 }

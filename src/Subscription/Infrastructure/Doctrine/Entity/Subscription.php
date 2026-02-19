@@ -49,4 +49,34 @@ class Subscription
     ) {
         $this->createdAt = new \DateTimeImmutable();
     }
+
+    public function getId(): Uuid
+    {
+        return $this->id;
+    }
+
+    public function getOwner(): Owner
+    {
+        return $this->owner;
+    }
+
+    public function getStatus(): SubscriptionStatus
+    {
+        return $this->status;
+    }
+
+    public function getStartTime(): \DateTimeImmutable
+    {
+        return $this->startTime;
+    }
+
+    public function getEndTime(): \DateTimeImmutable
+    {
+        return $this->endTime;
+    }
+
+    public function getCancelTime(): ?\DateTimeImmutable
+    {
+        return $this->cancelTime;
+    }
 }
