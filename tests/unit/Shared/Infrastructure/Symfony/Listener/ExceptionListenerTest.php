@@ -9,6 +9,7 @@ use App\Shared\Domain\NotFoundException;
 use App\Shared\Infrastructure\Symfony\Listener\ExceptionListener;
 use App\Shared\Infrastructure\Symfony\Response\ValidationErrorMapper;
 use App\Shared\Infrastructure\Symfony\Response\ValidationErrorResponseDTO;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +34,8 @@ final class ExceptionListenerTest extends TestCase
         $this->validationMapper = $this->createMock(ValidationErrorMapper::class);
     }
 
-    public function test_handles_validation_exception_with_422_status(): void
+    #[Test]
+    public function it_handles_validation_exception_with_422_status(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'prod');
@@ -78,7 +80,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertSame(['Password is too short'], $content['errors']['password']);
     }
 
-    public function test_handles_domain_exception_with_custom_status_code(): void
+    #[Test]
+    public function it_handles_domain_exception_with_custom_status_code(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'prod');
@@ -109,7 +112,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertArrayNotHasKey('trace', $content);
     }
 
-    public function test_includes_stack_trace_for_domain_exception_in_dev_environment(): void
+    #[Test]
+    public function it_includes_stack_trace_for_domain_exception_in_dev_environment(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'dev');
@@ -143,7 +147,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertIsString($content['trace']['trace']);
     }
 
-    public function test_handles_not_found_exception_with_404_status(): void
+    #[Test]
+    public function it_handles_not_found_exception_with_404_status(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'prod');
@@ -169,7 +174,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertArrayNotHasKey('trace', $content);
     }
 
-    public function test_includes_stack_trace_for_not_found_exception_in_dev_environment(): void
+    #[Test]
+    public function it_includes_stack_trace_for_not_found_exception_in_dev_environment(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'dev');
@@ -195,7 +201,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertArrayHasKey('trace', $content['trace']);
     }
 
-    public function test_handles_generic_exception_with_500_status_in_prod(): void
+    #[Test]
+    public function it_handles_generic_exception_with_500_status_in_prod(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'prod');
@@ -221,7 +228,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertArrayNotHasKey('trace', $content);
     }
 
-    public function test_shows_actual_message_for_generic_exception_in_dev(): void
+    #[Test]
+    public function it_shows_actual_message_for_generic_exception_in_dev(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'dev');
@@ -245,7 +253,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertArrayHasKey('trace', $content);
     }
 
-    public function test_does_not_treat_http_exception_without_validation_previous_as_validation_error(): void
+    #[Test]
+    public function it_does_not_treat_http_exception_without_validation_previous_as_validation_error(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'prod');
@@ -269,7 +278,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertSame('Internal server error', $content['message']);
     }
 
-    public function test_validation_mapper_is_not_called_for_non_validation_exceptions(): void
+    #[Test]
+    public function it_validation_mapper_is_not_called_for_non_validation_exceptions(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'prod');
@@ -288,7 +298,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertNotNull($event->getResponse());
     }
 
-    public function test_handles_multiple_validation_violations_for_same_field(): void
+    #[Test]
+    public function it_handles_multiple_validation_violations_for_same_field(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'prod');
@@ -329,7 +340,8 @@ final class ExceptionListenerTest extends TestCase
         $this->assertContains('Must contain number', $content['errors']['password']);
     }
 
-    public function test_stack_trace_contains_expected_fields(): void
+    #[Test]
+    public function it_stack_trace_contains_expected_fields(): void
     {
         // Given
         $listener = new ExceptionListener($this->validationMapper, 'dev');

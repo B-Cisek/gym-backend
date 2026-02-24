@@ -41,6 +41,7 @@ make test        # Run PHPUnit tests
 make phpstan     # Run PHPStan static analysis (level 6)
 make cs-fix      # Fix code style with PHP-CS-Fixer
 make cs-check    # Check code style without fixing
+make deptrac     # Run Deptrac architecture layer analysis
 ```
 
 Run tests inside container:
@@ -58,7 +59,7 @@ docker-compose exec app bin/console doctrine:schema:update --dump-sql
 
 ### Development Tools
 
-Install development tools (PHPStan, PHP-CS-Fixer):
+Install development tools (PHPStan, PHP-CS-Fixer, Deptrac):
 ```bash
 make tools-install
 ```
@@ -174,4 +175,5 @@ PHPUnit configuration in `phpunit.dist.xml`
 GitHub Actions workflows (`.github/workflows/ci.yml`):
 - PHPUnit tests (PHP 8.5)
 - PHPStan analysis (level 6)
+- Deptrac architecture layer validation
 - PHP-CS-Fixer validation (dry-run with diff)

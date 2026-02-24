@@ -19,6 +19,7 @@ use Symfony\Component\Uid\Uuid;
 #[Table(name: 'owners')]
 #[UniqueConstraint(name: 'UNIQ_OWNER_ID', columns: ['id'])]
 #[UniqueConstraint(name: 'UNIQ_OWNER_USER_ID', columns: ['user_id'])]
+#[UniqueConstraint(name: 'UNIQ_OWNER_STRIPE_CUSTOMER_ID', columns: ['stripe_customer_id'])]
 class Owner
 {
     #[Column(type: Types::DATETIME_IMMUTABLE)]
@@ -35,6 +36,8 @@ class Owner
         private Uuid $userId,
         #[Embedded(class: Address::class)]
         private Address $address,
+        #[Column(type: Types::BOOLEAN, options: ['default' => false])]
+        private bool $isProfileComplete = false,
         #[Column(type: Types::STRING, length: 255, nullable: true)]
         private ?string $companyName = null,
         #[Column(type: Types::STRING, length: 10, nullable: true)]
@@ -47,6 +50,8 @@ class Owner
         private ?string $lastName = null,
         #[Column(type: Types::STRING, length: 255, nullable: true)]
         private ?string $email = null,
+        #[Column(type: Types::STRING, unique: true, nullable: true)]
+        private ?string $stripeCustomerId = null,
     ) {
         $this->createdAt = new \DateTimeImmutable();
     }
@@ -158,6 +163,30 @@ class Owner
     public function setEmail(?string $email): Owner
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getStripeCustomerId(): ?string
+    {
+        return $this->stripeCustomerId;
+    }
+
+    public function setStripeCustomerId(?string $stripeCustomerId): Owner
+    {
+        $this->stripeCustomerId = $stripeCustomerId;
+
+        return $this;
+    }
+
+    public function isProfileComplete(): bool
+    {
+        return $this->isProfileComplete;
+    }
+
+    public function setProfileComplete(bool $isProfileComplete): Owner
+    {
+        $this->isProfileComplete = $isProfileComplete;
 
         return $this;
     }

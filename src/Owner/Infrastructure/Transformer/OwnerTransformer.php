@@ -23,12 +23,14 @@ class OwnerTransformer
                 city: $owner->address?->city,
                 postalCode: $owner->address?->postalCode,
             )),
+            isProfileComplete: $owner->profileCompleted,
             companyName: $owner->companyName,
             taxId: $owner->taxId,
             phone: $owner->phone,
             firstName: $owner->firstName,
             lastName: $owner->lastName,
             email: $owner->email,
+            stripeCustomerId: $owner->stripeCustomerId
         );
     }
 
@@ -37,6 +39,7 @@ class OwnerTransformer
         return DomainOwner::restore(
             id: new Id($entity->getId()->toString()),
             userId: new Id($entity->getUserId()->toString()),
+            profileCompleted: $entity->isProfileComplete(),
             firstName: $entity->getFirstName(),
             lastName: $entity->getLastName(),
             email: $entity->getEmail(),
@@ -47,7 +50,8 @@ class OwnerTransformer
                 street: $entity->getAddress()->getStreet(),
                 city: $entity->getAddress()->getCity(),
                 postalCode: $entity->getAddress()->getPostalCode(),
-            )
+            ),
+            stripeCustomerId: $entity->getStripeCustomerId()
         );
     }
 }

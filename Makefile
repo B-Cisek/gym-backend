@@ -1,4 +1,4 @@
-.PHONY: up down restart stop start exec logs ps build clean help tools-install phpstan cs-fix cs-check test
+.PHONY: up down restart stop start exec logs ps build clean help tools-install phpstan cs-fix cs-check test deptrac
 
 # Docker Compose command
 DC = docker-compose
@@ -30,6 +30,7 @@ help:
 	@echo "  make phpstan       - Run PHPStan static analysis"
 	@echo "  make cs-fix        - Fix code style with PHP-CS-Fixer"
 	@echo "  make cs-check      - Check code style without fixing"
+	@echo "  make deptrac       - Run Deptrac architecture analysis"
 	@echo "  make test          - Run tests"
 
 ## up: Start all containers
@@ -95,6 +96,10 @@ phpstan:
 ## cs-fix: Fix code style with PHP-CS-Fixer
 cs-fix:
 	$(DC) exec app .tools/vendor/bin/php-cs-fixer fix --allow-risky=yes
+
+## deptrac: Run Deptrac architecture analysis
+deptrac:
+	$(DC) exec app .tools/vendor/bin/deptrac analyse
 
 ## test: Run tests
 test:
