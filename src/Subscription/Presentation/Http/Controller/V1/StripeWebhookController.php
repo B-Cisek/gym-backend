@@ -29,20 +29,20 @@ final readonly class StripeWebhookController
                 payload: $request->getContent(),
                 signatureHeader: $request->headers->get('Stripe-Signature', ''),
             ));
+
+            return $this->jsonResponseFactory->success();
         } catch (SignatureVerificationException $e) {
             $this->stripeLogger->error('STRIPE_SIGNATURE_VERIFICATION_ERROR', [
                 'exception' => $e,
             ]);
 
-            $this->jsonResponseFactory->error('Stripe signature verification failed.');
+            return $this->jsonResponseFactory->error('Stripe signature verification failed.');
         } catch (\Throwable $e) {
             $this->stripeLogger->error('STRIPE_WEBHOOK_ERROR', [
                 'exception' => $e,
             ]);
 
-            $this->jsonResponseFactory->error('Error occurred while processing Stripe webhook.');
+            return $this->jsonResponseFactory->error('Error occurred while processing Stripe webhook.');
         }
-
-        return $this->jsonResponseFactory->success();
     }
 }

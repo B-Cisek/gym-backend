@@ -49,9 +49,9 @@ readonly class SyncPlansCommand
                 $plan = new Plan(
                     id: Uuid::fromString($this->idGenerator->generate()->toString()),
                     tier: $tier,
-                    isActive: true,
                     gymsLimit: $gymLimit,
                     staffLimit: $staffLimit,
+                    isActive: true,
                 );
 
                 $plan->addPrice(new PlanPrice(

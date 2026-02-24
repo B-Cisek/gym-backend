@@ -98,8 +98,18 @@ class Owner
 
     public function setProfileCompleted(): self
     {
-        $this->profileCompleted = true;
-
-        return $this;
+        return new self(
+            id: $this->id,
+            userId: $this->userId,
+            profileCompleted: true,
+            firstName: $this->firstName,
+            lastName: $this->lastName,
+            email: $this->email,
+            companyName: $this->companyName,
+            taxId: $this->taxId,
+            phone: $this->phone,
+            address: $this->address,
+            stripeCustomerId: $this->stripeCustomerId,
+        );
     }
 }
