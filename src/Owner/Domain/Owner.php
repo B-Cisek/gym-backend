@@ -7,11 +7,12 @@ namespace App\Owner\Domain;
 use App\Shared\Domain\Address;
 use App\Shared\Domain\Id;
 
-final readonly class Owner
+class Owner
 {
     private function __construct(
         public Id $id,
         public Id $userId,
+        public bool $profileCompleted,
         public ?string $firstName = null,
         public ?string $lastName = null,
         public ?string $email = null,
@@ -25,6 +26,7 @@ final readonly class Owner
     public static function create(
         Id $id,
         Id $userId,
+        bool $profileCompleted = false,
         ?string $firstName = null,
         ?string $lastName = null,
         ?string $email = null,
@@ -34,12 +36,13 @@ final readonly class Owner
         ?Address $address = null,
         ?string $stripeCustomerId = null,
     ): self {
-        return new self($id, $userId, $firstName, $lastName, $email, $companyName, $taxId, $phone, $address, $stripeCustomerId);
+        return new self($id, $userId, $profileCompleted, $firstName, $lastName, $email, $companyName, $taxId, $phone, $address, $stripeCustomerId);
     }
 
     public static function restore(
         Id $id,
         Id $userId,
+        bool $profileCompleted,
         ?string $firstName,
         ?string $lastName,
         ?string $email,
@@ -49,7 +52,7 @@ final readonly class Owner
         ?Address $address,
         ?string $stripeCustomerId,
     ): self {
-        return new self($id, $userId, $firstName, $lastName, $email, $companyName, $taxId, $phone, $address, $stripeCustomerId);
+        return new self($id, $userId, $profileCompleted, $firstName, $lastName, $email, $companyName, $taxId, $phone, $address, $stripeCustomerId);
     }
 
     public function update(
@@ -64,6 +67,7 @@ final readonly class Owner
         return new self(
             id: $this->id,
             userId: $this->userId,
+            profileCompleted: $this->profileCompleted,
             firstName: $firstName ?? $this->firstName,
             lastName: $lastName ?? $this->lastName,
             email: $email ?? $this->email,
@@ -80,6 +84,7 @@ final readonly class Owner
         return new self(
             id: $this->id,
             userId: $this->userId,
+            profileCompleted: $this->profileCompleted,
             firstName: $this->firstName,
             lastName: $this->lastName,
             email: $this->email,
@@ -89,5 +94,12 @@ final readonly class Owner
             address: $this->address,
             stripeCustomerId: $stripeCustomerId,
         );
+    }
+
+    public function setProfileCompleted(): self
+    {
+        $this->profileCompleted = true;
+
+        return $this;
     }
 }

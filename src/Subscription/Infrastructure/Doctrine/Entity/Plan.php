@@ -35,12 +35,12 @@ class Plan
         private Uuid $id,
         #[Column(enumType: PlanTier::class)]
         private PlanTier $tier,
-        #[Column(type: Types::BOOLEAN)]
-        private bool $isActive = true,
         #[Column(type: Types::INTEGER)]
         private int $gymsLimit,
         #[Column(type: Types::INTEGER)]
         private int $staffLimit,
+        #[Column(type: Types::BOOLEAN)]
+        private bool $isActive = true,
     ) {
         $this->prices = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
@@ -115,12 +115,14 @@ class Plan
     public function activePlan(): Plan
     {
         $this->isActive = true;
+
         return $this;
     }
 
     public function deactivatePlan(): Plan
     {
         $this->isActive = false;
+
         return $this;
     }
 }

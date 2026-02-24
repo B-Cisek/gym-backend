@@ -6,13 +6,12 @@ namespace App\Subscription\Domain;
 
 enum PlanTier: string
 {
-    public const string ROLE_OWNER_BASIC = 'ROLE_OWNER_BASIC';
-    public const string ROLE_OWNER_PRO = 'ROLE_OWNER_PRO';
-    public const string ROLE_OWNER_UNLIMITED = 'ROLE_OWNER_UNLIMITED';
-
     case BASIC = 'basic';
     case PRO = 'pro';
     case UNLIMITED = 'unlimited';
+    public const string ROLE_OWNER_BASIC = 'ROLE_OWNER_BASIC';
+    public const string ROLE_OWNER_PRO = 'ROLE_OWNER_PRO';
+    public const string ROLE_OWNER_UNLIMITED = 'ROLE_OWNER_UNLIMITED';
 
     public function getRole(): string
     {

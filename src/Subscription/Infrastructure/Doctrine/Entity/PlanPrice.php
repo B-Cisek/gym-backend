@@ -70,12 +70,14 @@ class PlanPrice
     public function setPrice(Money $price): PlanPrice
     {
         $this->price = $price;
+
         return $this;
     }
 
     public function setInterval(Interval $interval): PlanPrice
     {
         $this->interval = $interval;
+
         return $this;
     }
 }

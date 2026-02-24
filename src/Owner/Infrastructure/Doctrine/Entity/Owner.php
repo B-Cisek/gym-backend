@@ -36,6 +36,8 @@ class Owner
         private Uuid $userId,
         #[Embedded(class: Address::class)]
         private Address $address,
+        #[Column(type: Types::BOOLEAN, options: ['default' => false])]
+        private bool $isProfileComplete = false,
         #[Column(type: Types::STRING, length: 255, nullable: true)]
         private ?string $companyName = null,
         #[Column(type: Types::STRING, length: 10, nullable: true)]
@@ -173,6 +175,18 @@ class Owner
     public function setStripeCustomerId(?string $stripeCustomerId): Owner
     {
         $this->stripeCustomerId = $stripeCustomerId;
+
+        return $this;
+    }
+
+    public function isProfileComplete(): bool
+    {
+        return $this->isProfileComplete;
+    }
+
+    public function setProfileComplete(bool $isProfileComplete): Owner
+    {
+        $this->isProfileComplete = $isProfileComplete;
 
         return $this;
     }

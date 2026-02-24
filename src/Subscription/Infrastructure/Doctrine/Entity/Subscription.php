@@ -79,4 +79,54 @@ class Subscription
     {
         return $this->cancelTime;
     }
+
+    public function getStripeSubscriptionId(): string
+    {
+        return $this->stripeSubscriptionId;
+    }
+
+    public function getPrice(): PlanPrice
+    {
+        return $this->price;
+    }
+
+    public function setEndTime(\DateTimeImmutable $endTime): Subscription
+    {
+        $this->endTime = $endTime;
+
+        return $this;
+    }
+
+    public function setStartTime(\DateTimeImmutable $startTime): Subscription
+    {
+        $this->startTime = $startTime;
+
+        return $this;
+    }
+
+    public function setStatus(SubscriptionStatus $status): Subscription
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function setNextPrice(?PlanPrice $nextPrice): Subscription
+    {
+        $this->nextPrice = $nextPrice;
+
+        return $this;
+    }
+
+    public function getNextPrice(): ?PlanPrice
+    {
+        return $this->nextPrice;
+    }
+
+    public function setCancelTime(?\DateTimeImmutable $cancelTime): Subscription
+    {
+        $this->cancelTime = $cancelTime;
+
+        return $this;
+    }
 }

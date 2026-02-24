@@ -33,8 +33,6 @@ final readonly class CheckoutController
             planPriceId: $request->planPriceId,
         ));
 
-        return $this->jsonResponseFactory->data([
-            'checkout_url' => $checkoutUrl,
-        ]);
+        return $this->jsonResponseFactory->data(['url' => $checkoutUrl]);
     }
 }

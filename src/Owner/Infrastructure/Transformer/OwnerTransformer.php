@@ -23,6 +23,7 @@ class OwnerTransformer
                 city: $owner->address?->city,
                 postalCode: $owner->address?->postalCode,
             )),
+            isProfileComplete: $owner->profileCompleted,
             companyName: $owner->companyName,
             taxId: $owner->taxId,
             phone: $owner->phone,
@@ -38,6 +39,7 @@ class OwnerTransformer
         return DomainOwner::restore(
             id: new Id($entity->getId()->toString()),
             userId: new Id($entity->getUserId()->toString()),
+            profileCompleted: $entity->isProfileComplete(),
             firstName: $entity->getFirstName(),
             lastName: $entity->getLastName(),
             email: $entity->getEmail(),

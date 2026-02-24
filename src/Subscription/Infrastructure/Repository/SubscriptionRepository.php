@@ -6,32 +6,55 @@ namespace App\Subscription\Infrastructure\Repository;
 
 use App\Shared\Domain\Id;
 use App\Subscription\Domain\Subscription as DomainSubscription;
+use App\Subscription\Domain\SubscriptionNotFoundException;
 use App\Subscription\Domain\SubscriptionRepository as DomainSubscriptionRepository;
-use App\Subscription\Infrastructure\Doctrine\Entity\Subscription;
 use App\Subscription\Infrastructure\Doctrine\Repository\SubscriptionRepository as DoctrineSubscriptionRepository;
+use App\Subscription\Infrastructure\Transformer\SubscriptionTransformer;
+use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class SubscriptionRepository implements DomainSubscriptionRepository
 {
     public function __construct(
         private DoctrineSubscriptionRepository $doctrineRepository,
+        private EntityManagerInterface $entityManager,
+        private SubscriptionTransformer $transformer
     ) {}
 
     public function findByOwnerId(Id $ownerId): ?DomainSubscription
     {
         $entity = $this->doctrineRepository->findByOwnerId($ownerId->toString());
 
-        return $entity !== null ? $this->toDomain($entity) : null;
+        return $entity !== null ? $this->transformer->toDomain($entity) : null;
     }
 
-    private function toDomain(Subscription $entity): DomainSubscription
+    public function findByStripeSubscriptionId(string $stripeSubscriptionId): ?DomainSubscription
     {
-        return DomainSubscription::restore(
-            id: new Id($entity->getId()->toString()),
-            ownerId: new Id($entity->getOwner()->getId()->toString()),
-            status: $entity->getStatus(),
-            startTime: $entity->getStartTime(),
-            endTime: $entity->getEndTime(),
-            cancelTime: $entity->getCancelTime(),
-        );
+        $entity = $this->doctrineRepository->findByStripeId($stripeSubscriptionId);
+
+        return $entity !== null ? $this->transformer->toDomain($entity) : null;
+    }
+
+    public function update(DomainSubscription $subscription): void
+    {
+        $entity = $this->doctrineRepository->findByStripeId($subscription->stripeSubscriptionId);
+
+        if ($entity === null) {
+            throw new SubscriptionNotFoundException();
+        }
+
+        $entity
+            ->setUpdatedAt(new \DateTimeImmutable())
+            ->setStatus($subscription->status)
+            ->setCancelTime($subscription->cancelTime)
+            ->setStartTime($subscription->startTime)
+            ->setEndTime($subscription->endTime)
+        ;
+
+        $this->entityManager->flush();
+    }
+
+    public function save(DomainSubscription $subscription): void
+    {
+        $this->doctrineRepository->save($this->transformer->fromDomain($subscription));
     }
 }

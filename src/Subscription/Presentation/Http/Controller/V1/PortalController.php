@@ -7,6 +7,7 @@ namespace App\Subscription\Presentation\Http\Controller\V1;
 use App\Auth\Domain\UserRole;
 use App\Shared\Application\Command\Sync\CommandBus;
 use App\Shared\Infrastructure\Security\AuthContext;
+use App\Shared\Presentation\Http\Response\JsonResponseFactory;
 use App\Subscription\Application\Command\Sync\CreatePortalSession;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,6 +18,7 @@ final readonly class PortalController
     public function __construct(
         private CommandBus $commandBus,
         private AuthContext $authContext,
+        private JsonResponseFactory $jsonResponseFactory,
     ) {}
 
     #[Route(path: '/subscriptions/portal', name: 'subscriptions.portal', methods: ['POST'])]
@@ -28,6 +30,6 @@ final readonly class PortalController
             ownerId: $this->authContext->getOwnerId(),
         ));
 
-        return new JsonResponse(['portal_url' => $portalUrl]);
+        return $this->jsonResponseFactory->data(['url' => $portalUrl]);
     }
 }

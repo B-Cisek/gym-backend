@@ -26,17 +26,18 @@ readonly class SyncPlansCommand
         private StripeGatewayInterface $stripeGateway,
         private PlanRepository $planRepository,
         private IdGeneratorInterface $idGenerator
-    ) {
-    }
+    ) {}
 
     public function __invoke(OutputInterface $output): int
     {
         $plans = [];
 
-        $collection = $this->stripeGateway->getPrices();
+        $prices = $this->stripeGateway->getPrices();
 
-        foreach ($collection->data as $price) {
-            $data = $price->toArray();
+        foreach ($prices['data'] as $data) {
+            if (!$data['lookup_key']) {
+                continue;
+            }
 
             $tier = PlanTier::from(explode('_', $data['lookup_key'])[0]);
             $gymLimit = $data['metadata']['gyms_limit'] === 'unlimited' ? 0 : (int) $data['metadata']['gyms_limit'];
@@ -55,7 +56,7 @@ readonly class SyncPlansCommand
 
                 $plan->addPrice(new PlanPrice(
                     id: Uuid::fromString($this->idGenerator->generate()->toString()),
-                    stripePriceId: $price->id,
+                    stripePriceId: $data['id'],
                     plan: $plan,
                     interval: new Interval(
                         value: $data['recurring']['interval_count'],
@@ -72,7 +73,8 @@ readonly class SyncPlansCommand
                 $existingPlan
                     ->setGymsLimit($gymLimit)
                     ->setStaffLimit($staffLimit)
-                    ->setUpdatedAt(new \DateTimeImmutable());
+                    ->setUpdatedAt(new \DateTimeImmutable())
+                ;
 
                 // the assumption that there will be only one price
                 // dont work for many tier prices
@@ -91,7 +93,8 @@ readonly class SyncPlansCommand
                         value: $data['recurring']['interval_count'],
                         unit: IntervalUnit::from($data['recurring']['interval'])
                     ))
-                    ->setUpdatedAt(new \DateTimeImmutable());
+                    ->setUpdatedAt(new \DateTimeImmutable())
+                ;
 
                 $plans[] = $existingPlan;
             }

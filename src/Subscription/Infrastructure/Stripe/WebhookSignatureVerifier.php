@@ -26,7 +26,7 @@ final readonly class WebhookSignatureVerifier implements WebhookSignatureVerifie
 
         return new WebhookEvent(
             type: $event->type,
-            data: $event->data->toArray(),
+            data: $event->data->toArray()
         );
     }
 }

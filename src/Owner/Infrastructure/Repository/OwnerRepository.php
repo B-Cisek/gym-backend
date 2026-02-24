@@ -37,6 +37,7 @@ readonly class OwnerRepository implements DomainOwnerRepository
                 city: $owner->address?->city,
                 postalCode: $owner->address?->postalCode,
             ));
+            $existing->setProfileComplete($owner->profileCompleted);
             $existing->setStripeCustomerId($owner->stripeCustomerId);
             $existing->setUpdatedAt(new \DateTimeImmutable());
             $entity = $existing;

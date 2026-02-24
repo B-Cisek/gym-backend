@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Subscription\Infrastructure\Service;
+namespace App\Subscription\Infrastructure\Stripe;
 
 use App\Subscription\Application\Service\StripeWebhookEventHandlerInterface;
-use App\Subscription\Application\Service\StripeWebhookEventProviderInterface;
+use App\Subscription\Application\Service\StripeWebhookEventHandlerProviderInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
-final readonly class StripeWebhookEventProvider implements StripeWebhookEventProviderInterface
+final readonly class StripeWebhookEventHandlerProvider implements StripeWebhookEventHandlerProviderInterface
 {
     /**
      * @param iterable<StripeWebhookEventHandlerInterface> $handlers

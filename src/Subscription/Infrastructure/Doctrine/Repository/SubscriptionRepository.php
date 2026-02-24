@@ -39,7 +39,7 @@ final readonly class SubscriptionRepository
 
         return $qb->select('s')
             ->from(Subscription::class, 's')
-            ->where('s.stripeId = :stripeId')
+            ->where('s.stripeSubscriptionId = :stripeId')
             ->setParameter('stripeId', $stripeId)
             ->getQuery()
             ->getOneOrNullResult()

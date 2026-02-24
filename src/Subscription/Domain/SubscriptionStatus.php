@@ -6,13 +6,21 @@ namespace App\Subscription\Domain;
 
 enum SubscriptionStatus: string
 {
-    case INCOMPLETE = 'incomplete';
-
     case TRIALING = 'trialing';
 
     case ACTIVE = 'active';
 
+    case INCOMPLETE = 'incomplete';
+
+    case INCOMPLETE_EXPIRED = 'incomplete_expired';
+
+    case PAST_DUE = 'past_due';
+
     case CANCELED = 'canceled';
+
+    case UNPAID = 'unpaid';
+
+    case PAUSED = 'paused';
 
     public function isIncomplete(): bool
     {
@@ -32,5 +40,25 @@ enum SubscriptionStatus: string
     public function isCanceled(): bool
     {
         return $this === self::CANCELED;
+    }
+
+    public function isUnpaid(): bool
+    {
+        return $this === self::UNPAID;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this === self::PAUSED;
+    }
+
+    public function isPastDue(): bool
+    {
+        return $this === self::PAST_DUE;
+    }
+
+    public function isIncompleteExpired(): bool
+    {
+        return $this === self::INCOMPLETE_EXPIRED;
     }
 }

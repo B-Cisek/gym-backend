@@ -21,7 +21,7 @@ final readonly class CreateOwnerHandler implements CommandHandler
         private UserRepository $userRepository,
         private IdGeneratorInterface $idGenerator,
         private StripeGatewayInterface $stripeGateway,
-        private LoggerInterface $logger
+        private LoggerInterface $stripeLogger,
     ) {}
 
     /**
@@ -52,10 +52,11 @@ final readonly class CreateOwnerHandler implements CommandHandler
         try {
             return $this->stripeGateway->createCustomer(email: $email, ownerId: $ownerId);
         } catch (\Throwable $e) {
-            $this->logger->error('FAILED_TO_CREATE_CUSTOMER', [
+            $this->stripeLogger->error('FAILED_TO_CREATE_CUSTOMER', [
                 'message' => $e->getMessage(),
-                'exception' => $e
+                'exception' => $e,
             ]);
+
             return null;
         }
     }

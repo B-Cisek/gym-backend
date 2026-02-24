@@ -46,6 +46,7 @@ security:
          - { path: ^/api/v1/auth/member/register, roles: PUBLIC_ACCESS }
          - { path: ^/api/v1/auth/owner/register, roles: PUBLIC_ACCESS }
          - { path: ^/api/v1/auth/login, roles: PUBLIC_ACCESS }
+         - { path: ^/api/v1/plans$, roles: PUBLIC_ACCESS }
          - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
