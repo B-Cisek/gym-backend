@@ -5,6 +5,10 @@ doctrine:
         options:
             timezone: '%env(APP_TZ)%'
         profiling_collect_backtrace: '%kernel.debug%'
+        types:
+            id: App\Shared\Infrastructure\Doctrine\Type\IdType
+            email: App\Auth\Infrastructure\Doctrine\Type\EmailType
+            user_roles: App\Auth\Infrastructure\Doctrine\Type\UserRoleArrayType
     orm:
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
@@ -15,32 +19,38 @@ doctrine:
             App:
                 type: attribute
                 is_bundle: false
+                dir: '%kernel.project_dir%/src/Auth/Domain'
+                prefix: 'App\Auth\Domain'
+                alias: Auth
+            AuthInfra:
+                type: attribute
+                is_bundle: false
                 dir: '%kernel.project_dir%/src/Auth/Infrastructure/Doctrine/Entity'
                 prefix: 'App\Auth\Infrastructure\Doctrine\Entity'
-                alias: Auth
+                alias: AuthInfra
             Embeddable:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Shared/Infrastructure/Doctrine/Embeddable'
-                prefix: 'App\Shared\Infrastructure\Doctrine\Embeddable'
+                dir: '%kernel.project_dir%/src/Shared/Domain'
+                prefix: 'App\Shared\Domain'
                 alias: Embeddable
             Gym:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Gym/Infrastructure/Doctrine/Entity'
-                prefix: 'App\Gym\Infrastructure\Doctrine\Entity'
+                dir: '%kernel.project_dir%/src/Gym/Domain'
+                prefix: 'App\Gym\Domain'
                 alias: Gym
             Owner:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Owner/Infrastructure/Doctrine/Entity'
-                prefix: 'App\Owner\Infrastructure\Doctrine\Entity'
+                dir: '%kernel.project_dir%/src/Owner/Domain'
+                prefix: 'App\Owner\Domain'
                 alias: Owner
             Subscription:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Subscription/Infrastructure/Doctrine/Entity'
-                prefix: 'App\Subscription\Infrastructure\Doctrine\Entity'
+                dir: '%kernel.project_dir%/src/Subscription/Domain'
+                prefix: 'App\Subscription\Domain'
                 alias: Subscription
         controller_resolver:
             auto_mapping: false

@@ -21,11 +21,11 @@ final readonly class SendWelcomeEmailListener
         $user = $this->userRepository->get($event->userId);
 
         $email = new Email(
-            recipient: $user->email->value,
+            recipient: $user->getEmail()->value,
             subject: 'Welcome to Gym Management!',
             text: sprintf(
                 "Hello!\n\nThank you for registering with Gym Management.\n\nYour account with email %s has been created successfully.\n\nBest regards,\nGym Management Team",
-                $user->email->value
+                $user->getEmail()->value
             ),
         );
 

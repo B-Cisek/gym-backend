@@ -22,8 +22,8 @@ final readonly class CreateOwnerOnUserRegisteredListener
         $user = $this->userRepository->get($event->userId);
 
         $isOwner = array_any(
-            $user->roles,
-            fn (UserRole $role) => $role === UserRole::OWNER,
+            $user->getRoles(),
+            fn (string $role) => $role === UserRole::OWNER->value,
         );
 
         if (!$isOwner) {

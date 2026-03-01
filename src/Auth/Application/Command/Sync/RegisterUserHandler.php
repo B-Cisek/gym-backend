@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Auth\Application\Command\Sync;
 
+use App\Auth\Application\Service\PasswordHasherInterface;
 use App\Auth\Domain\Email;
-use App\Auth\Domain\PasswordHasherInterface;
 use App\Auth\Domain\User;
 use App\Auth\Domain\UserAlreadyExistsException;
 use App\Auth\Domain\UserRegistered;
@@ -35,12 +35,13 @@ final readonly class RegisterUserHandler implements CommandHandler
         }
 
         $user = User::register(
-            $this->idGenerator->generate(),
-            $email,
-            $command->roles
+            id: $this->idGenerator->generate(),
+            email: $email,
+            password: $this->hasher->hash($command->password),
+            roles: $command->roles
         );
 
-        $this->repository->save($user, $this->hasher->hash($command->password));
+        $this->repository->save($user);
 
         $this->eventDispatcher->dispatch(new UserRegistered($user->id));
 

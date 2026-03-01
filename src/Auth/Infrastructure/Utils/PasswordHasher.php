@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Auth\Infrastructure\Utils;
 
-use App\Auth\Domain\PasswordHasherInterface;
-use App\Auth\Infrastructure\Doctrine\Entity\User;
+use App\Auth\Application\Service\PasswordHasherInterface;
+use App\Auth\Domain\User;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface as SymfonyPasswordHasher;
 
 readonly class PasswordHasher implements PasswordHasherInterface

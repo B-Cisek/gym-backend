@@ -6,8 +6,8 @@ namespace App\Tests\Unit\Auth\Application\Command\Sync;
 
 use App\Auth\Application\Command\Sync\RegisterUser;
 use App\Auth\Application\Command\Sync\RegisterUserHandler;
+use App\Auth\Application\Service\PasswordHasherInterface;
 use App\Auth\Domain\Email;
-use App\Auth\Domain\PasswordHasherInterface;
 use App\Auth\Domain\User;
 use App\Auth\Domain\UserAlreadyExistsException;
 use App\Auth\Domain\UserRegistered;
@@ -43,9 +43,9 @@ final class RegisterUserHandlerTest extends TestCase
             ->method('save')
             ->with(
                 self::callback(fn (User $user): bool => $user->id->equals($id)
-                    && $user->email->equals(Email::fromString(self::EMAIL))
-                    && $user->roles === [UserRole::MEMBER]),
-                self::HASHED_PASSWORD,
+                    && $user->getEmail()->equals(Email::fromString(self::EMAIL))
+                    && $user->getRoles() === [UserRole::MEMBER->value]
+                    && $user->getPassword() === self::HASHED_PASSWORD),
             )
         ;
 

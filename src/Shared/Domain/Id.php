@@ -13,6 +13,11 @@ readonly class Id
         $this->valid();
     }
 
+    public function __toString(): string
+    {
+        return $this->id;
+    }
+
     public function toString(): string
     {
         return $this->id;

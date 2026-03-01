@@ -4,68 +4,70 @@ declare(strict_types=1);
 
 namespace App\Owner\Infrastructure\Repository;
 
-use App\Owner\Domain\Owner as DomainOwner;
+use App\Owner\Domain\Owner;
 use App\Owner\Domain\OwnerNotFoundException;
 use App\Owner\Domain\OwnerRepository as DomainOwnerRepository;
-use App\Owner\Infrastructure\Doctrine\Repository\OwnerRepository as DoctrineOwnerRepository;
-use App\Owner\Infrastructure\Transformer\OwnerTransformer;
 use App\Shared\Domain\Id;
-use App\Shared\Infrastructure\Doctrine\Embeddable\Address;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class OwnerRepository implements DomainOwnerRepository
 {
     public function __construct(
-        private DoctrineOwnerRepository $doctrineRepository,
-        private OwnerTransformer $transformer,
+        private EntityManagerInterface $entityManager,
     ) {}
 
-    public function save(DomainOwner $owner): void
+    public function save(Owner $owner): void
     {
-        $existing = $this->doctrineRepository->get($owner->id->toString());
-
-        if ($existing === null) {
-            $entity = $this->transformer->fromDomain($owner);
-        } else {
-            $existing->setFirstName($owner->firstName);
-            $existing->setLastName($owner->lastName);
-            $existing->setEmail($owner->email);
-            $existing->setCompanyName($owner->companyName);
-            $existing->setTaxId($owner->taxId);
-            $existing->setPhone($owner->phone);
-            $existing->setAddress(new Address(
-                street: $owner->address?->street,
-                city: $owner->address?->city,
-                postalCode: $owner->address?->postalCode,
-            ));
-            $existing->setProfileComplete($owner->profileCompleted);
-            $existing->setStripeCustomerId($owner->stripeCustomerId);
-            $existing->setUpdatedAt(new \DateTimeImmutable());
-            $entity = $existing;
-        }
-
-        $this->doctrineRepository->save($entity);
+        $this->entityManager->persist($owner);
+        $this->entityManager->flush();
     }
 
-    public function get(Id $id): DomainOwner
+    public function get(Id $id): Owner
     {
-        $entity = $this->doctrineRepository->get($id->toString());
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $entity = $qb->select('o')
+            ->from(Owner::class, 'o')
+            ->where('o.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
 
         return $entity === null
             ? throw new OwnerNotFoundException()
-            : $this->transformer->toDomain($entity);
+            : $entity;
     }
 
-    public function getByUserId(Id $userId): DomainOwner
+    public function getByUserId(Id $userId): Owner
     {
-        $entity = $this->doctrineRepository->getByUserId($userId->toString());
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $entity = $qb->select('o')
+            ->from(Owner::class, 'o')
+            ->where('o.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
 
         return $entity === null
             ? throw new OwnerNotFoundException()
-            : $this->transformer->toDomain($entity);
+            : $entity;
     }
 
     public function existsByUserId(Id $userId): bool
     {
-        return $this->doctrineRepository->existsByUserId($userId->toString());
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $count = $qb->select('COUNT(o.id)')
+            ->from(Owner::class, 'o')
+            ->where('o.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        return $count > 0;
     }
 }
