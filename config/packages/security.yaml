@@ -2,13 +2,13 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-        App\Auth\Infrastructure\Doctrine\Entity\User: 'auto'
+        App\Auth\Domain\User: 'auto'
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
             entity:
-                class: App\Auth\Infrastructure\Doctrine\Entity\User
+                class: App\Auth\Domain\User
                 property: email
 
     firewalls:

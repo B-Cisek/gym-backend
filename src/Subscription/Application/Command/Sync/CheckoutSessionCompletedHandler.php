@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Subscription\Application\Command\Sync;
 
+use App\Owner\Domain\OwnerRepository;
 use App\Shared\Application\Command\Sync\CommandHandler;
 use App\Shared\Application\Service\IdGeneratorInterface;
 use App\Shared\Domain\Id;
@@ -19,6 +20,7 @@ final readonly class CheckoutSessionCompletedHandler implements CommandHandler
 {
     public function __construct(
         private LoggerInterface $stripeLogger,
+        private OwnerRepository $ownerRepository,
         private SubscriptionRepository $subscriptionRepository,
         private PlanPriceRepository $planPriceRepository,
         private StripeGatewayInterface $stripeGateway,
@@ -48,10 +50,12 @@ final readonly class CheckoutSessionCompletedHandler implements CommandHandler
             throw new PlanPriceNotFoundException();
         }
 
+        $owner = $this->ownerRepository->get($ownerId);
+
         $subscription = Subscription::create(
             id: $this->idGenerator->generate(),
-            ownerId: $ownerId,
-            planPriceId: $planPrice->id,
+            owner: $owner,
+            planPrice: $planPrice,
             status: SubscriptionStatus::from($stripeSubscription->status),
             startTime: $stripeSubscription->startTime,
             endTime: $stripeSubscription->endTime,

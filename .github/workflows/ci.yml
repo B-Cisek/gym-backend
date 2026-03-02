@@ -10,6 +10,27 @@ jobs:
   tests:
     name: Tests (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.1-alpine
+        env:
+          POSTGRES_DB: gym
+          POSTGRES_USER: gym_user
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gym_user -d gym"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://gym_user:password@127.0.0.1:5432/gym?serverVersion=18&charset=utf8
+      JWT_SECRET_KEY: "%kernel.project_dir%/config/jwt/private.pem"
+      JWT_PUBLIC_KEY: "%kernel.project_dir%/config/jwt/public.pem"
+      JWT_PASSPHRASE: 2b404cca8fa57fe3e0c5a60677338f2883911d97ff60e78b6ec2b945657402ef
+      JWT_TOKEN_TTL: 900
+      JWT_REFRESH_TOKEN_TTL: 2592000
 
     strategy:
       fail-fast: false
@@ -24,7 +45,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: ctype, iconv, pdo_sqlite
+          extensions: ctype, iconv, pdo_pgsql
           coverage: none
 
       - name: Get composer cache directory
@@ -40,6 +61,14 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
+
+      - name: Generate JWT keys
+        run: php bin/console lexik:jwt:generate-keypair --env=test --skip-if-exists --no-interaction
+
+      - name: Prepare test database
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:migrations:migrate --env=test --no-interaction
 
       - name: Run tests
         run: vendor/bin/phpunit

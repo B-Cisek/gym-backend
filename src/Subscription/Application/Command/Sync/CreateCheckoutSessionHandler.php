@@ -44,6 +44,6 @@ final readonly class CreateCheckoutSessionHandler implements CommandHandler
             $this->ownerRepository->save($owner);
         }
 
-        return $this->stripeGateway->createCheckoutSession($stripeCustomerId, $planPrice->stripeId, $owner->id->toString());
+        return $this->stripeGateway->createCheckoutSession($stripeCustomerId, $planPrice->getStripePriceId(), $owner->id->toString());
     }
 }

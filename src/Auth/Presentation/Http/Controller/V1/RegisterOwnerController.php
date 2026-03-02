@@ -22,7 +22,7 @@ final readonly class RegisterOwnerController
         private JsonResponseFactory $responseFactory,
     ) {}
 
-    #[Route('/auth/owner/register', methods: ['POST'])]
+    #[Route(path: '/auth/owner/register', name: 'auth.register.owner', methods: ['POST'])]
     public function register(#[MapRequestPayload] OwnerRegisterRequest $request): JsonResponse
     {
         try {

@@ -41,7 +41,7 @@ final readonly class CreateOwnerHandler implements CommandHandler
         $owner = Owner::create(
             id: $ownerId,
             userId: $userId,
-            stripeCustomerId: $this->getCustomerId($user->email->value, $ownerId->toString())
+            stripeCustomerId: $this->getCustomerId($user->getEmail()->value, $ownerId->toString())
         );
 
         $this->repository->save($owner);

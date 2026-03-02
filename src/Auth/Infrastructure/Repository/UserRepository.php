@@ -8,44 +8,67 @@ use App\Auth\Domain\Email;
 use App\Auth\Domain\User;
 use App\Auth\Domain\UserNotFoundException;
 use App\Auth\Domain\UserRepository as DomainUserRepository;
-use App\Auth\Infrastructure\Doctrine\Repository\UserRepository as DoctrineUserRepository;
-use App\Auth\Infrastructure\Transformer\UserTransformer;
 use App\Shared\Domain\Id;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class UserRepository implements DomainUserRepository
 {
     public function __construct(
-        private DoctrineUserRepository $doctrineRepository,
-        private UserTransformer $transformer
+        private EntityManagerInterface $entityManager,
     ) {}
 
-    public function save(User $user, string $hashedPassword): void
+    public function save(User $user): void
     {
-        $entity = $this->transformer->fromDomain($user, $hashedPassword);
-
-        $this->doctrineRepository->save($entity);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 
     public function get(Id $id): User
     {
-        $entity = $this->doctrineRepository->get($id->toString());
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $entity = $qb->select('u')
+            ->from(User::class, 'u')
+            ->where('u.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
 
         return $entity === null
             ? throw new UserNotFoundException()
-            : $this->transformer->toDomain($entity);
+            : $entity;
     }
 
     public function getByEmail(Email $email): User
     {
-        $entity = $this->doctrineRepository->getByEmail($email->value);
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $entity = $qb->select('u')
+            ->from(User::class, 'u')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
 
         return $entity === null
             ? throw new UserNotFoundException()
-            : $this->transformer->toDomain($entity);
+            : $entity;
     }
 
     public function existsByEmail(Email $email): bool
     {
-        return $this->doctrineRepository->existsByEmail($email->value);
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $count = $qb->select('COUNT(u.id)')
+            ->from(User::class, 'u')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        return $count > 0;
     }
 }

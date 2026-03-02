@@ -22,7 +22,7 @@ final readonly class RegisterMemberController
         private JsonResponseFactory $responseFactory,
     ) {}
 
-    #[Route('/auth/member/register', methods: ['POST'])]
+    #[Route(path: '/auth/member/register', name: 'auth.register.member', methods: ['POST'])]
     public function register(#[MapRequestPayload] MemberRegisterRequest $request): JsonResponse
     {
         try {

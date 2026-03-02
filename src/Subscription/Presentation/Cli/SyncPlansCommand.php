@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace App\Subscription\Presentation\Cli;
 
 use App\Shared\Application\Service\IdGeneratorInterface;
-use App\Shared\Infrastructure\Doctrine\Embeddable\Interval;
-use App\Shared\Infrastructure\Doctrine\Embeddable\Money;
 use App\Subscription\Application\Service\StripeGatewayInterface;
 use App\Subscription\Domain\Currency;
+use App\Subscription\Domain\Embeddable\Interval;
+use App\Subscription\Domain\Embeddable\Money;
 use App\Subscription\Domain\IntervalUnit;
+use App\Subscription\Domain\Plan;
+use App\Subscription\Domain\PlanPrice;
 use App\Subscription\Domain\PlanTier;
-use App\Subscription\Infrastructure\Doctrine\Entity\Plan;
-use App\Subscription\Infrastructure\Doctrine\Entity\PlanPrice;
-use App\Subscription\Infrastructure\Doctrine\Repository\PlanRepository;
+use App\Subscription\Infrastructure\Repository\PlanRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Uid\Uuid;
 
 #[AsCommand(name: 'app:stripe:sync-plans')]
 readonly class SyncPlansCommand
@@ -47,15 +46,15 @@ readonly class SyncPlansCommand
 
             if ($existingPlan === null) {
                 $plan = new Plan(
-                    id: Uuid::fromString($this->idGenerator->generate()->toString()),
+                    id: $this->idGenerator->generate(),
                     tier: $tier,
                     gymsLimit: $gymLimit,
                     staffLimit: $staffLimit,
                     isActive: true,
                 );
 
-                $plan->addPrice(new PlanPrice(
-                    id: Uuid::fromString($this->idGenerator->generate()->toString()),
+                $plan->addPrice(PlanPrice::create(
+                    id: $this->idGenerator->generate(),
                     stripePriceId: $data['id'],
                     plan: $plan,
                     interval: new Interval(
