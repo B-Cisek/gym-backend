@@ -116,7 +116,7 @@ final readonly class ExceptionListener
     private function handleGenericException(\Throwable $exception): JsonResponse
     {
         $data = [
-            'message' => $this->environment === 'dev'
+            'message' => $this->isDebugEnvironment()
                 ? $exception->getMessage()
                 : 'Internal server error',
         ];
@@ -131,9 +131,14 @@ final readonly class ExceptionListener
      */
     private function addStackTraceToResponse(array &$data, \Throwable $exception): void
     {
-        if ($this->environment === 'dev') {
+        if ($this->isDebugEnvironment()) {
             $data['trace'] = $this->getStackTrace($exception);
         }
+    }
+
+    private function isDebugEnvironment(): bool
+    {
+        return in_array($this->environment, ['dev', 'test'], true);
     }
 
     /**
