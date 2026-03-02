@@ -186,7 +186,6 @@ final class RegisterUserTest extends WebTestCase
 
     private function getAsyncTransport(): InMemoryTransport
     {
-        /** @var InMemoryTransport $transport */
         return self::getContainer()->get('messenger.transport.async');
     }
 }
