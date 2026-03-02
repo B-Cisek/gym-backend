@@ -6,7 +6,6 @@ namespace App\Owner\Infrastructure\EventListener;
 
 use App\Auth\Domain\UserRegistered;
 use App\Auth\Domain\UserRepository;
-use App\Auth\Domain\UserRole;
 use App\Owner\Application\Command\Sync\CreateOwner;
 use App\Shared\Application\Command\Sync\CommandBus;
 
@@ -21,12 +20,7 @@ final readonly class CreateOwnerOnUserRegisteredListener
     {
         $user = $this->userRepository->get($event->userId);
 
-        $isOwner = array_any(
-            $user->getRoles(),
-            fn (string $role) => $role === UserRole::OWNER->value,
-        );
-
-        if (!$isOwner) {
+        if (!$user->isOwner()) {
             return;
         }
 
