@@ -7,6 +7,7 @@ namespace App\Shared\Infrastructure\Security;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final readonly class AuthContext
 {
@@ -15,18 +16,32 @@ final readonly class AuthContext
         private JWTTokenManagerInterface $jwtTokenManager,
     ) {}
 
-    // TODO: In the future, handle for non owner users, now it explodes when user is not owner
     public function getOwnerId(): string
     {
-        return $this->payload()['owner_id'];
+        $ownerId = $this->payload()['owner_id'] ?? null;
+
+        if (!is_string($ownerId)) {
+            throw new AccessDeniedException('Owner context is required.');
+        }
+
+        return $ownerId;
     }
 
     /** @return array<string, mixed> */
     private function payload(): array
     {
-        /** @var TokenInterface $token */
         $token = $this->tokenStorage->getToken();
 
-        return $this->jwtTokenManager->decode($token);
+        if (!$token instanceof TokenInterface) {
+            throw new AccessDeniedException('Authentication token was not found.');
+        }
+
+        $payload = $this->jwtTokenManager->decode($token);
+
+        if ($payload === false) {
+            throw new AccessDeniedException('Authentication token payload is invalid.');
+        }
+
+        return $payload;
     }
 }

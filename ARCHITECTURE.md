@@ -1,280 +1,147 @@
-# Gym SaaS – podsumowanie architektury (MVP)
+# Gym SaaS - architektura systemu
 
 ## 1. Cel systemu
 
-System SaaS do zarządzania siecią siłowni:
+System SaaS do zarzadzania siecia silowni:
 
-* właściciel (Owner) wykupuje abonament
-* owner może mieć wiele siłowni (lokalizacji)
-* klienci kupują karnet u ownera i mogą wejść do wszystkich jego siłowni
-* jeden backend (Symfony API)
-* wiele klientów: web + mobile
+- owner (tenant) zarzadza swoim kontem i lokalizacjami (gym)
+- wiele silowni w ramach jednego ownera
+- jeden backend API dla web i mobile
+- pojedyncze logowanie (JWT) dla uzytkownika
 
----
+## 2. Multi-tenant
 
-## 2. Główne założenia architektoniczne
+- Model: single database, tenantem jest `Owner`
+- Izolacja danych: przez `owner_id`
+- `Gym` jest kontekstem operacyjnym, nie tenantem
 
-* **Multi-tenant (single database)**
-* Tenantem jest **Owner (firma)**
-* Jedno konto użytkownika = jedno logowanie
-* Różne role wynikają z relacji, nie z osobnych systemów auth
-* Brak relogowania przy zmianie siłowni
+## 3. Aktualne moduly
 
----
+Kod jest podzielony na moduly biznesowe:
 
-## 3. Główne byty domenowe
+- `Auth`
+- `Owner`
+- `Gym`
+- `Subscription`
+- `Shared` (cross-cutting)
 
-### User
+Kazdy modul posiada warstwy:
 
-Wspólny byt dla wszystkich:
+- `Domain`
+- `Application`
+- `Infrastructure`
+- `Presentation`
 
-* owner
-* recepcjonista / staff
-* klient
+## 4. Glowne byty domenowe
 
-```sql
-users
-- id
-- email
-- password
-- is_active
-```
+Najwazniejsze byty obecne w kodzie:
 
----
+- `Auth\Domain\User`
+- `Owner\Domain\Owner`
+- `Gym\Domain\Gym`
+- `Subscription\Domain\Plan`
+- `Subscription\Domain\PlanPrice`
+- `Subscription\Domain\Subscription`
 
-### Owner (firma)
+Dodatkowo w `Shared\Domain` znajduja sie wspolne value objecty i typy, np. `Id`, `Address`.
 
-```sql
-owners
-- id
-- user_id
-- name
-```
+## 5. Logowanie i JWT
 
-* Owner = tenant
-* Owner wykupuje abonament SaaS
-* Owner posiada wiele siłowni
+Autentykacja oparta o JWT (LexikJWTAuthenticationBundle).
 
----
+Payload JWT zawiera dane tozsamosci i role, a dodatkowo:
 
-### Gym (lokalizacja)
+- jezeli zalogowany user ma role owner, do payloadu dodawane jest `owner_id`
+- `owner_id` jest ustawiane w listenerze `JWT_CREATED`
+- `AuthContext` odczytuje `owner_id` z tokena i udostepnia go warstwom aplikacyjnym
 
-```sql
-gyms
-- id
-- owner_id
-- name
-- address
-```
+Kontekst silowni przekazywany jest naglowkiem:
 
-* Gym zawsze należy do jednego ownera
-* Gym to tylko lokalizacja, nie byt billingowy
-
----
-
-## 4. Karnety (logika biznesowa)
-
-### Pass (karnet)
-
-```sql
-passes
-- id
-- owner_id
-- name
-- valid_days
-- entry_limit
-```
-
-* Karnet jest przypisany do **ownera**, nie do siłowni
-* Karnet daje dostęp do wszystkich siłowni ownera
-
----
-
-### UserPass (karnet użytkownika)
-
-```sql
-user_passes
-- id
-- user_id
-- pass_id
-- valid_until
-- active
-```
-
-Logika wejścia:
-
-* user chce wejść do gym
-* gym należy do ownera
-* user ma aktywny karnet ownera
-
----
-
-## 5. Personel (recepcja / trenerzy)
-
-```sql
-staff_memberships
-- id
-- user_id
-- gym_id
-- role (RECEPTION, TRAINER)
-```
-
-* staff przypisany do konkretnej siłowni
-* jeden user może pracować w wielu siłowniach
-
----
-
-## 6. Role i autoryzacja
-
-### Role systemowe
-
-* ROLE_OWNER
-* ROLE_STAFF
-* ROLE_MEMBER
-
-Jedno konto użytkownika może mieć wiele ról jednocześnie.
-
----
-
-## 7. Logowanie i kontekst
-
-### Logowanie
-
-* email + password
-* JWT (identity only)
-
-JWT zawiera:
-
-```json
-{
-  "sub": 123,
-  "roles": ["ROLE_OWNER", "ROLE_STAFF"]
-}
-```
-
----
-
-### Kontekst siłowni
-
-* Aktywna siłownia przekazywana w headerze:
-
-```
+```http
 X-Gym-Id: <gym_id>
 ```
 
-* Brak potrzeby relogowania
-* Backend sprawdza:
+## 6. Subscription i billing
 
-  * czy user ma dostęp do tej siłowni
-  * czy siłownia należy do odpowiedniego ownera
+Model subskrypcji ownera:
 
----
+- `Plan` - poziom/tier oraz limity (np. gyms/staff)
+- `PlanPrice` - warianty cenowe planu (Stripe price, interwal, kwota)
+- `Subscription` - aktywna subskrypcja ownera
 
-## 8. Plany SaaS (abonamenty ownera)
+Integracja platnosci realizowana jest przez Stripe po stronie warstwy `Infrastructure`.
 
-```sql
-plans
-- id
-- code (basic, pro)
-- max_gyms
-- max_staff_per_gym
-```
+## 7. Struktura katalogow (Layered + modular)
 
-```sql
-subscriptions
-- id
-- owner_id
-- plan_id
-- active
-```
-
-Przykład:
-
-* basic: max 2 siłownie
-* pro: max 10 siłowni
-
-Limity sprawdzane w warstwie serwisów (domain logic).
-
----
-
-## 9. Najważniejsze decyzje projektowe
-
-* Jeden backend dla web + mobile
-* Jeden system logowania
-* Karnet przypisany do ownera
-* Gym jako kontekst, nie tenant
-* Authorization oparta o relacje (Voters / Policies)
-
----
-
-## 10. Struktura katalogów (Layered Architecture)
-
-System oparty o architekturę warstwową z podziałem na cztery główne warstwy:
-
-```
+```text
 src/
-├── Domain/          # Warstwa domenowa (encje, interfejsy, logika biznesowa)
-├── Application/     # Warstwa aplikacyjna (use cases, komendy, query)
-├── Infrastructure/  # Warstwa infrastruktury (implementacje, persistence)
-└── Presentation/    # Warstwa prezentacji (API controllers, requests)
+├── Auth/
+│   ├── Domain/
+│   ├── Application/
+│   ├── Infrastructure/
+│   └── Presentation/
+├── Owner/
+│   ├── Domain/
+│   ├── Application/
+│   ├── Infrastructure/
+│   └── Presentation/
+├── Gym/
+│   ├── Domain/
+│   ├── Application/
+│   ├── Infrastructure/
+│   └── Presentation/
+├── Subscription/
+│   ├── Domain/
+│   ├── Application/
+│   ├── Infrastructure/
+│   └── Presentation/
+└── Shared/
+    ├── Domain/
+    ├── Application/
+    ├── Infrastructure/
+    └── Presentation/
 ```
 
-### Domain (`src/Domain/`)
+## 8. Odpowiedzialnosci warstw
 
-Rdzeń biznesowy aplikacji – encje i logika domenowa:
+### Domain (`*/Domain/`)
 
-* **Entity/** – encje domenowe (User, Gym, Pass, Owner)
-* **Repository/** – interfejsy repozytoriów (bez implementacji)
-* **Service/** – serwisy domenowe (czysta logika biznesowa)
+- model domenowy i reguly biznesowe
+- encje domenowe mapowane bezposrednio atrybutami Doctrine (`#[Entity]`, `#[Column]`, relacje)
+- interfejsy repozytoriow
+- value objecty i typy domenowe
 
----
+### Application (`*/Application/`)
 
-### Application (`src/Application/`)
+- przypadki uzycia (Command/Query)
+- handlery komend i zapytan
+- DTO/Result obiekty na granicy use case'ow
 
-Przypadki użycia (use cases):
+### Infrastructure (`*/Infrastructure/`)
 
-* **Command/** – komendy i handlery (zmiany stanu)
-* **Query/** – zapytania i handlery (odczyt danych)
-* **DTO/** – Data Transfer Objects
+- implementacje interfejsow z Domain (repozytoria Doctrine, query, adaptery)
+- custom Doctrine types i integracje zewnetrzne (np. Stripe)
+- elementy frameworkowe (security listeners, utilities)
 
----
+### Presentation (`*/Presentation/`)
 
-### Infrastructure (`src/Infrastructure/`)
+- kontrolery HTTP i komendy CLI
+- mapowanie request/response
+- delegowanie do Application
 
-Implementacje techniczne:
+## 9. Zasady zaleznosci
 
-* **Persistence/** – repozytoria (Doctrine), ORM mapping, migracje
-* **Security/** – authenticatory, voters, providery
-* **External/** – integracje zewnętrzne (płatności, email)
+1. `Application` zalezy od `Domain`
+2. `Infrastructure` implementuje kontrakty z `Domain` i wspiera `Application`
+3. `Presentation` korzysta z `Application` (+ pomocniczo z `Infrastructure`)
+4. `Shared` zawiera elementy wspolne dla modulow
 
----
+Przeplyw danych:
 
-### Presentation (`src/Presentation/`)
-
-Warstwa API:
-
-* **Controller/** – kontrolery API (thin, delegują do Application)
-* **Request/** – walidacja inputu
-* **Response/** – serializacja outputu
-* **EventListener/** – event listeners dla HTTP lifecycle
-
----
-
-### Zasady separacji warstw
-
-1. **Domain** nie zależy od niczego (pure PHP)
-2. **Application** zależy tylko od Domain
-3. **Infrastructure** implementuje interfejsy z Domain
-4. **Presentation** używa Application i Infrastructure
-
-Przepływ danych:
-
+```text
+Request -> Controller (Presentation)
+       -> Command/Query (Application)
+       -> Domain model + Repository interface (Domain)
+       -> Repository/Adapter implementation (Infrastructure)
+       -> Database / External service
 ```
-Request → Controller (Presentation)
-        → Command/Query (Application)
-        → Domain Service/Repository (Domain)
-        → Repository Implementation (Infrastructure)
-        → Database
-```
-
----
